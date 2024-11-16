@@ -2,7 +2,7 @@ from typing import List, Tuple
 from path import Path
 
 class Location:
-    def __init__(self, name : str, latitude : int, longitude : int, id : str, is_important : bool = False):
+    def __init__(self, name : str, latitude : int, longitude : int, id : str, is_important : bool):
         self.__name = name
         self.__latitude = latitude
         self.__longitude = longitude

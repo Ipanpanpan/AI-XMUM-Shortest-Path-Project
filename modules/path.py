@@ -7,7 +7,7 @@ class Path:
         self.__weight = weight
 
     def get_start_loc(self) -> Location:
-        return self.__startnode
+        return self.__start_node
 
     def get_end_loc(self) -> Location:
         return self.__end_node
@@ -15,3 +15,8 @@ class Path:
     def get_distance(self) -> int:
         return self.__weight
     
+    def set_start_loc(self, loc : Location):
+        self.__start_node = loc
+
+    def set_end_loc(self, loc : Location):
+        self.__end_node = loc
