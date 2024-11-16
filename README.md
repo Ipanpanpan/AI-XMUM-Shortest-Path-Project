@@ -1,2 +1,2 @@
 # AI-XMUM-Shortest-Path-Project
-Project that helps students, faculties, parents to find the shortest path between two places in XMUM.
+A project designed to assist students, faculty members, and parents in finding the shortest and most efficient path between two locations within the XMUM campus. This tool aims to enhance convenience and save time by providing optimized navigation solutions for anyone navigating the university premises, whether they're trying to locate a classroom, office, facility, or any other campus area. By leveraging advanced algorithms and a user-friendly interface, the project ensures accessibility and usability for all campus visitors.
