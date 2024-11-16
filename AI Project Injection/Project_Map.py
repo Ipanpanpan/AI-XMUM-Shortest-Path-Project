@@ -7,6 +7,10 @@ from flask import Flask, request, jsonify
 import threading
 import time
 
+XMUM_map = get_map()
+
+
+
 # Initialize Flask app
 app = Flask(__name__)
 

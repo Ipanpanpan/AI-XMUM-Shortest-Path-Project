@@ -3,7 +3,7 @@ from location import Location
 
 class Map: 
     def __init__(self):
-        self.__nodes : Dict[Location] = {}
+        self.__nodes : Dict[str : Location] = {}
     
     def add_loc(self, loc : Location):
         self.__nodes[loc.get_id()] = loc

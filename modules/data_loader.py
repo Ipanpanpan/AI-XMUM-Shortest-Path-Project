@@ -1,8 +1,10 @@
 import xml.etree.ElementTree as ET
 import pandas as pd
-from graph import Map
+from map import Map
+def parse_path(file_path:str) -> pd.DataFrame:
+    pass
 
-def parse_kml_to_dataframe(file_path: str) -> pd.DataFrame:
+def parse_location(file_path: str) -> pd.DataFrame:
     # Step 1: Define the KML namespace
     namespace = {'kml': 'http://www.opengis.net/kml/2.2', 'gx': 'http://www.google.com/kml/ext/2.2'}
 
