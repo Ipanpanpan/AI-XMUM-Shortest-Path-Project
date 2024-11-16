@@ -3,7 +3,7 @@ from location import Location
 
 class Map: 
     def __init__(self):
-        self.__nodes : Dict[Location] = {}
+        self.__nodes : Dict[str : Location] = {}
     
     def add_loc(self, loc : Location):
         self.__nodes[loc.get_id()] = loc
@@ -24,5 +24,8 @@ class Map:
     def get_important_loc(self) -> List[Location]:
         return [loc for loc in self.__nodes if loc.is_important()]
     
-    def shortest_path(self, from_loc, to_loc):
+    def shortest_path(self, from_loc, to_loc) -> List[List[int]]:
+        pass
+    
+    def from_curr_shortest_path(self, to_loc):
         pass
