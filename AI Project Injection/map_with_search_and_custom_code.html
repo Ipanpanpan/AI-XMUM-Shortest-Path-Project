@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_bca60add36e61e902bdf6e2f4e67df80 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+    
+                    <style>
+                        .foliumtooltip {
+                            
+                        }
+                       .foliumtooltip table{
+                            margin: auto;
+                        }
+                        .foliumtooltip tr{
+                            text-align: left;
+                        }
+                        .foliumtooltip th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    </style>
+            
+    
+                    <style>
+                        .foliumpopup {
+                            margin: auto;
+                        }
+                       .foliumpopup table{
+                            margin: auto;
+                        }
+                        .foliumpopup tr{
+                            text-align: left;
+                        }
+                        .foliumpopup th{
+                            padding: 2px; padding-right: 8px;
+                        }
+                    </style>
+            
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-search@2.9.7/dist/leaflet-search.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@2.9.7/dist/leaflet-search.min.css"/>
+</head>
+<body>
+    
+    <script>
+    function latLngPop(e) {
+        lat_lng_popup_0
+            .setLatLng(e.latlng)
+            .setContent(`
+                lat: ${
+                    e.latlng.lat
+                }, lng: ${
+                    e.latlng.lng
+                }
+                <button onClick="
+                    console.log('Coordinates: ', e.latlng.lat, e.latlng.lng);  // Print coordinates to console
+                    fetch('http://localhost:3001', {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            latitude: ${
+                                e.latlng.lat
+                            },
+                            longitude: ${
+                                e.latlng.lng
+                            }
+                        })
+                    });
+
+                    L.marker(
+                        [${
+                            e.latlng.lat
+                        }, ${
+                            e.latlng.lng
+                        }],
+                        {}).addTo(map_0);
+                "> Store Coordinate </button>
+                <button onClick="
+                    fetch('http://localhost:3001', {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: 'q'
+                    });
+                "> Quit </button>
+            `)
+            .openOn(map_0);
+    }
+</script>
+    
+            <div class="folium-map" id="map_bca60add36e61e902bdf6e2f4e67df80" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_bca60add36e61e902bdf6e2f4e67df80 = L.map(
+                "map_bca60add36e61e902bdf6e2f4e67df80",
+                {
+                    center: [2.830722842200986, 101.7024047956367],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 17,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_72af6fe931c95b0f3f311f7aca133e65 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_72af6fe931c95b0f3f311f7aca133e65.addTo(map_bca60add36e61e902bdf6e2f4e67df80);
+        
+    
+
+        function geo_json_a79935bdc3a78bb8144ad43792c54e2d_onEachFeature(feature, layer) {
+            layer.on({
+            });
+        };
+        var geo_json_a79935bdc3a78bb8144ad43792c54e2d = L.geoJson(null, {
+                onEachFeature: geo_json_a79935bdc3a78bb8144ad43792c54e2d_onEachFeature,
+            
+        });
+
+        function geo_json_a79935bdc3a78bb8144ad43792c54e2d_add (data) {
+            geo_json_a79935bdc3a78bb8144ad43792c54e2d
+                .addData(data);
+        }
+            geo_json_a79935bdc3a78bb8144ad43792c54e2d_add({"features": [{"geometry": {"coordinates": [101.7024047956367, 2.830722842200986], "type": "Point"}, "properties": {"name": "A1 "}, "type": "Feature"}, {"geometry": {"coordinates": [101.7030181152358, 2.830984655758713], "type": "Point"}, "properties": {"name": "A2"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7038289942513, 2.831143121360798], "type": "Point"}, "properties": {"name": "A3"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7046646300577, 2.831146950533314], "type": "Point"}, "properties": {"name": "A4"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7053095347586, 2.831059361664928], "type": "Point"}, "properties": {"name": "A5"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7016330405039, 2.830180713222624], "type": "Point"}, "properties": {"name": "Auditorium Hall Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7014134420724, 2.830692711474303], "type": "Point"}, "properties": {"name": "Hotel Lobby"}, "type": "Feature"}, {"geometry": {"coordinates": [101.705237646473, 2.830819073003197], "type": "Point"}, "properties": {"name": "A5 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7053031334117, 2.83133535147205], "type": "Point"}, "properties": {"name": "A5 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7055436046022, 2.831006900642034], "type": "Point"}, "properties": {"name": "A5 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7049535732747, 2.831138974323014], "type": "Point"}, "properties": {"name": "A5 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7048394797451, 2.831167084950097], "type": "Point"}, "properties": {"name": "A4 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7043673390979, 2.831183334350842], "type": "Point"}, "properties": {"name": "A4 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7038584331843, 2.830731465238707], "type": "Point"}, "properties": {"name": "A3 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7041434654306, 2.831171776799878], "type": "Point"}, "properties": {"name": "A3 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7034356681022, 2.831121030579399], "type": "Point"}, "properties": {"name": "A3 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7032704914925, 2.831051008775778], "type": "Point"}, "properties": {"name": "A2 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7027576809489, 2.830916232002462], "type": "Point"}, "properties": {"name": "A2 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7046177787622, 2.83087923389605], "type": "Point"}, "properties": {"name": "A4 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7046160465818, 2.831417945506549], "type": "Point"}, "properties": {"name": "A4 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.703738923065, 2.831527157205926], "type": "Point"}, "properties": {"name": "A3 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7030931471115, 2.830645743038354], "type": "Point"}, "properties": {"name": "A2 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7029291078694, 2.831238155253212], "type": "Point"}, "properties": {"name": "A2 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7025409829167, 2.830412244863976], "type": "Point"}, "properties": {"name": "A1 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.702251106543, 2.830986185020601], "type": "Point"}, "properties": {"name": "A1 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7026268869393, 2.830818485878113], "type": "Point"}, "properties": {"name": "A1 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7021197071837, 2.830657506019806], "type": "Point"}, "properties": {"name": "A1 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7069664821888, 2.832143729218499], "type": "Point"}, "properties": {"name": "B1 Level G Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7074199918424, 2.832599081819958], "type": "Point"}, "properties": {"name": "B1 Front Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7069613661451, 2.832835851837686], "type": "Point"}, "properties": {"name": "B1 Level 1 Entrance (Stair)"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7063655932977, 2.832472825410159], "type": "Point"}, "properties": {"name": "B1 Back Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7065927429858, 2.833904898248997], "type": "Point"}, "properties": {"name": "D6 Canteen Left Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7062076938093, 2.833845714993003], "type": "Point"}, "properties": {"name": "D6 Canteen Front Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7060031733072, 2.834356203884548], "type": "Point"}, "properties": {"name": "????"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7062085397605, 2.83426110603366], "type": "Point"}, "properties": {"name": "D6 Canteen Right Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7056865913774, 2.833931296326257], "type": "Point"}, "properties": {"name": "D4 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7049364225088, 2.833973664919504], "type": "Point"}, "properties": {"name": "LY5 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7044137318079, 2.834060512596007], "type": "Point"}, "properties": {"name": "LY5 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7045067934033, 2.834708835131379], "type": "Point"}, "properties": {"name": "LY9 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7050600390679, 2.834637310104792], "type": "Point"}, "properties": {"name": "LY9 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7042047457389, 2.83465302035221], "type": "Point"}, "properties": {"name": "LY8 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7036614417468, 2.834311539433456], "type": "Point"}, "properties": {"name": "LY3 Canteen Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7028947567671, 2.834648714998209], "type": "Point"}, "properties": {"name": "LY7 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7017419991149, 2.834717116263797], "type": "Point"}, "properties": {"name": "LY6 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.702017189996, 2.833840306122959], "type": "Point"}, "properties": {"name": "LY1 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7031400261378, 2.834329589511388], "type": "Point"}, "properties": {"name": "LY3 Canteen Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7029936015337, 2.833940863844996], "type": "Point"}, "properties": {"name": "LY2 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7029985516773, 2.833287148985687], "type": "Point"}, "properties": {"name": "Music Island"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7029174392581, 2.833116598995495], "type": "Point"}, "properties": {"name": "Music Island"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7029994836315, 2.832970872786449], "type": "Point"}, "properties": {"name": "Music Island"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7060767009557, 2.833222800780949], "type": "Point"}, "properties": {"name": "D3 Front Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7036894389047, 2.834663801162439], "type": "Point"}, "properties": {"name": "LY8 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7037305985763, 2.834064871419597], "type": "Point"}, "properties": {"name": "LY4 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7021964408452, 2.834620251498549], "type": "Point"}, "properties": {"name": "LY6 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.702380602732, 2.834656676807993], "type": "Point"}, "properties": {"name": "LY7 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7024715944826, 2.833898932908656], "type": "Point"}, "properties": {"name": "LY1 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7033765925854, 2.833835599571819], "type": "Point"}, "properties": {"name": "LY3 Canteen Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7042648978954, 2.834053873499897], "type": "Point"}, "properties": {"name": "LY4 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.706851070028, 2.833897119778934], "type": "Point"}, "properties": {"name": "D2 Back Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7071062826029, 2.83377191477884], "type": "Point"}, "properties": {"name": "D2 Front Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7056972584638, 2.833754382153031], "type": "Point"}, "properties": {"name": "D4 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7054424005267, 2.834442162172119], "type": "Point"}, "properties": {"name": "D5 Entrance"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7057193601645, 2.834514513137695], "type": "Point"}, "properties": {"name": "D5 Entrance???"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7077375291361, 2.832845871732928], "type": "Point"}, "properties": {"name": "Guard House"}, "type": "Feature"}, {"geometry": {"coordinates": [101.7025928691547, 2.8339503647066], "type": "Point"}, "properties": {"name": "LY2 Entrance"}, "type": "Feature"}], "type": "FeatureCollection"});
+        geo_json_a79935bdc3a78bb8144ad43792c54e2d.setStyle(function(feature) {return feature.properties.style;});
+
+        
+    
+    geo_json_a79935bdc3a78bb8144ad43792c54e2d.bindTooltip(
+    function(layer){
+    let div = L.DomUtil.create('div');
+    
+    let handleObject = feature=>typeof(feature)=='object' ? JSON.stringify(feature) : feature;
+    let fields = ["name"];
+    let aliases = ["name"];
+    let table = '<table>' +
+        String(
+        fields.map(
+        (v,i)=>
+        `<tr>
+            <td>${handleObject(layer.feature.properties[v])}</td>
+        </tr>`).join(''))
+    +'</table>';
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{"className": "foliumtooltip", "sticky": true});
+                     
+    
+    geo_json_a79935bdc3a78bb8144ad43792c54e2d.bindPopup(
+    function(layer){
+    let div = L.DomUtil.create('div');
+    
+    let handleObject = feature=>typeof(feature)=='object' ? JSON.stringify(feature) : feature;
+    let fields = ["name"];
+    let aliases = ["name"];
+    let table = '<table>' +
+        String(
+        fields.map(
+        (v,i)=>
+        `<tr>
+            <td>${handleObject(layer.feature.properties[v]).toLocaleString()}</td>
+        </tr>`).join(''))
+    +'</table>';
+    div.innerHTML=table;
+    
+    return div
+    }
+    ,{"className": "foliumpopup"});
+                     
+    
+            geo_json_a79935bdc3a78bb8144ad43792c54e2d.addTo(map_bca60add36e61e902bdf6e2f4e67df80);
+        
+    
+            var geo_json_a79935bdc3a78bb8144ad43792c54e2dsearchControl = new L.Control.Search({
+                layer: geo_json_a79935bdc3a78bb8144ad43792c54e2d,
+                
+                propertyName: 'name',
+                
+                collapsed: false,
+                textPlaceholder: 'Search by name',
+                position:'topleft',
+            
+                initial: false,
+                
+                hideMarkerOnCollapse: true
+            
+                });
+                geo_json_a79935bdc3a78bb8144ad43792c54e2dsearchControl.on('search:locationfound', function(e) {
+                    geo_json_a79935bdc3a78bb8144ad43792c54e2d.setStyle(function(feature){
+                        return feature.properties.style
+                    })
+                    
+                    if(e.layer._popup)
+                        e.layer.openPopup();
+                })
+                geo_json_a79935bdc3a78bb8144ad43792c54e2dsearchControl.on('search:collapsed', function(e) {
+                        geo_json_a79935bdc3a78bb8144ad43792c54e2d.setStyle(function(feature){
+                            return feature.properties.style
+                    });
+                });
+            map_bca60add36e61e902bdf6e2f4e67df80.addControl( geo_json_a79935bdc3a78bb8144ad43792c54e2dsearchControl );
+
+        
+</script>
+</html>
