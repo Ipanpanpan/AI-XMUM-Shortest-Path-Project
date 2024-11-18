@@ -24,8 +24,8 @@ class Map:
     def get_important_loc(self) -> List[Location]:
         return [loc for loc in self.__nodes if loc.is_important()]
     
-    def shortest_path(self, from_loc, to_loc) -> List[List[int]]:
+    def shortest_path(self, from_loc : str, to_loc : str) -> List[List[int]]:
         pass
     
-    def from_curr_shortest_path(self, to_loc):
+    def from_curr_shortest_path(self, coor, to_loc):
         pass

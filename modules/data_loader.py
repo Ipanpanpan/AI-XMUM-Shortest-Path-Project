@@ -1,10 +1,17 @@
 import xml.etree.ElementTree as ET
 import pandas as pd
 from map import Map
+from location import Location
+
 def parse_path(file_path:str) -> pd.DataFrame:
+    #start_point, end_point, distance
     pass
 
+
+
 def parse_location(file_path: str) -> pd.DataFrame:
+    #id, loc_name, latitude, longitude, is_important
+
     # Step 1: Define the KML namespace
     namespace = {'kml': 'http://www.opengis.net/kml/2.2', 'gx': 'http://www.google.com/kml/ext/2.2'}
 
@@ -54,8 +61,10 @@ df = parse_kml_to_dataframe(file_path)
 print(df)
 
 
-XMUM_map = Map()
-XMUM_map.get_important_loc()
-
 def get_map() -> Map:
-    pass
+    XMUM_map = Map()
+    loc = Location()
+    XMUM_map.add_loc(loc)
+
+    return XMUM_map
+
