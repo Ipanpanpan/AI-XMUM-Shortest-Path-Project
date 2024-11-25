@@ -1,5 +1,4 @@
 from typing import List, Tuple
-from path import Path
 
 class Location:
     def __init__(self, name : str, latitude : int, longitude : int, id : str, is_important : bool):
@@ -10,6 +9,11 @@ class Location:
         self.__is_important = is_important
         self.__edges : List[Path] = []
     
+    def __eq__(self, other):
+        if isinstance(other, Location):
+            return self.get_id() == other.get_id()
+        return False
+
     def get_name(self) -> str:
         return self.__name
     
@@ -22,7 +26,7 @@ class Location:
     def get_id(self) -> str:
         return self.__id
     
-    def get_neighbouring_path(self) -> List[Path]:
+    def get_neighbouring_path(self) -> List['Path']:
         return self.__edges.copy()
     
     def get_neighbouring_loc(self) -> List["Location"]:
@@ -46,3 +50,25 @@ class Location:
     def add_neighbouring_path(self, to_loc : "Location", distance : int):
         self.__edges.append(Path(self, to_loc, distance))
 
+
+
+class Path:
+    def __init__(self, start_node : Location, end_node : Location, weight : int):
+        self.__start_node = start_node
+        self.__end_node = end_node
+        self.__weight = weight
+
+    def get_start_loc(self) -> Location:
+        return self.__start_node
+
+    def get_end_loc(self) -> Location:
+        return self.__end_node
+    
+    def get_distance(self) -> int:
+        return self.__weight
+    
+    def set_start_loc(self, loc : Location):
+        self.__start_node = loc
+
+    def set_end_loc(self, loc : Location):
+        self.__end_node = loc
