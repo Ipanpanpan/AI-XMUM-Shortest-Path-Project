@@ -84,7 +84,7 @@ def parse_location(file_path: str) -> pd.DataFrame:
 
     return pd.DataFrame(locations)
 
-file_path = r"C:\Users\Ivan Nathanael\AI-XMUM-Shortest-Path-Project\data\AI shortest path project.kml"
+file_path = r"data\AI shortest path project.kml"
 
 location_df = parse_location(file_path)
 path_df = parse_path(file_path)
