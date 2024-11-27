@@ -3,6 +3,8 @@ import pandas as pd
 from map import Map
 from location import Location
 from geopy.distance import geodesic
+import numpy as np
+
 
 def parse_path(file_path: str) -> pd.DataFrame:
     # Namespace for KML
@@ -136,6 +138,20 @@ def validate_kml(file_path: str, location_df: pd.DataFrame, path_df: pd.DataFram
 
 
 
+def find_nearest_location(coord, map, locs_coor = None):
+    if isinstance(locs_coor, type(np.array([]))):
+        locs_coor = np.array([[loc.get_latitude(), loc.get_longitude()] for loc in map.get_all_loc()])
+    # Convert the input coordinate to a numpy array
+    coord = np.array(coord)
+    
+    # Compute the Euclidean distance between coord and each location in locs_coor
+    distances = np.linalg.norm(locs_coor - coord, axis=1)  # axis=1 to compute row-wise norm (distance for each location)
+    
+    # Find the index of the closest location
+    index = np.argmin(distances)
+    
+    # Return the location corresponding to the minimum distance
+    return map.get_all_loc()[index]
 
 def get_map() -> Map:
     file_path = r"data\AI shortest path project.kml"
@@ -143,7 +159,6 @@ def get_map() -> Map:
     path_df = parse_path(file_path)
 
     XMUM_map = Map()
-    location_objects = {}
     
     for _, row in location_df.iterrows():
         loc = Location(
@@ -154,29 +169,18 @@ def get_map() -> Map:
             is_important = row['is_important']
         )
         XMUM_map.add_loc(loc)
-        location_objects[(row['latitude'], row['longitude'])] = loc
     
-    def find_nearest_location(coord):
-        nearest_loc = None
-        min_distance = float('inf')
-        for loc_coords, loc in location_objects.items():
-            distance = geodesic(coord, loc_coords).meters
-            if distance < min_distance:
-                min_distance = distance
-                nearest_loc = loc
-        return nearest_loc
 
+    locs_coor = np.array([[loc.get_latitude(), loc.get_longitude()] for loc in XMUM_map.get_all_loc()])
     for _, row in path_df.iterrows():
         start_coords = row['start_point']
         end_coords = row['end_point']
         distance = row['distance']
 
-        start_loc = location_objects.get(start_coords)
-        end_loc = location_objects.get(end_coords)
+        start_loc : Location = find_nearest_location(start_coords, XMUM_map, locs_coor)
+        end_loc : Location = find_nearest_location(end_coords, XMUM_map, locs_coor)
 
-        if start_loc and end_loc:
-            start_loc.find_nearest_location(end_loc, distance)
-            end_loc.find_nearest_location(start_loc, distance)
+        XMUM_map.add_path(start_loc.get_id(), end_loc.get_id(), distance)
     
     return XMUM_map
 

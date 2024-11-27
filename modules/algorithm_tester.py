@@ -7,6 +7,8 @@ from location import Location
 from geopy.distance import geodesic
 import matplotlib.pyplot as plt
 
+
+
 from data_loader import get_map
 
 import random
@@ -14,7 +16,7 @@ import random
 def main():
     # Initialize Map
     city_map = Map()
-    random.seed(40)
+    # random.seed(90)
     for i in range(100):
         x, y = random.uniform(0, 10), random.uniform(0, 10)
         loc_i : Location = Location(id = str(i), name = str(i), latitude= x, longitude= y, is_important= True)
@@ -27,7 +29,7 @@ def main():
             dis = geodesic(loc_i.get_coordinate(), loc2.get_coordinate()).meters
             city_map.add_path(loc_i.get_id(), loc2.get_id(), dis)
         
-    # city_map = get_map()
+    city_map = get_map()
     # Test Shortest Path
     start_location = random.choice(city_map.get_important_loc()).get_name()  # New York
     end_location = random.choice(city_map.get_important_loc()).get_name()     # Los Angeles
@@ -35,7 +37,7 @@ def main():
 
 
     print(f"Finding shortest path from {start_location} to {end_location}...")
-    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "a*")
+    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "greedy")
     # path, distance = [], 10
     if path:
         print("Shortest path coordinates:")
