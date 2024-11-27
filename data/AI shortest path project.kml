@@ -5317,7 +5317,7 @@
 		</LookAt>
 		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
 		<Point>
-			<coordinates>101.7043723797941,2.833668685705826,23.1589624210332</coordinates>
+			<coordinates>101.7044239642975,2.83366442542351,23.1589624210332</coordinates>
 		</Point>
 	</Placemark>
 	<Placemark id="0D464DF847346070F986">
@@ -6787,7 +6787,7 @@
 		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
 		<LineString>
 			<coordinates>
-				101.7041269198858,2.83367329062893,0 101.7043753382195,2.833670409344898,0 
+				101.7041269198858,2.83367329062893,0 101.7044231331405,2.833665230861946,0 
 			</coordinates>
 		</LineString>
 	</Placemark>
@@ -6825,7 +6825,7 @@
 		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
 		<LineString>
 			<coordinates>
-				101.704374915065,2.833668904573612,0 101.7046234448172,2.833654233728859,0 
+				101.7044255804797,2.833665542331614,0 101.7046234448172,2.833654233728859,0 
 			</coordinates>
 		</LineString>
 	</Placemark>
@@ -12732,7 +12732,7 @@
 		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
 		<LineString>
 			<coordinates>
-				101.7041297850347,2.833782965315023,0 101.704391880508,2.833784224952115,0 
+				101.7041297850347,2.833782965315023,0 101.7042608327713,2.83378359514097,0 101.704391880508,2.833784224952115,0 
 			</coordinates>
 		</LineString>
 	</Placemark>
@@ -19762,6 +19762,112 @@
 		<Point>
 			<coordinates>101.7026368498581,2.834656004719494,35.53642268678443</coordinates>
 		</Point>
+	</Placemark>
+	<Placemark id="02AE21655534A38364BB">
+		<name>Untitled placemark</name>
+		<LookAt>
+			<longitude>101.7059908581887</longitude>
+			<latitude>2.831323423172137</latitude>
+			<altitude>23.84397700528832</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30.00000000000333</gx:fovy>
+			<range>108.6730766605433</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
+		<Point>
+			<coordinates>101.7061337742567,2.831311720664019,23.15844931249796</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="074FC46ED234A3D281AF">
+		<name>Untitled placemark</name>
+		<LookAt>
+			<longitude>101.7038664999937</longitude>
+			<latitude>2.833700996849994</latitude>
+			<altitude>24.55639270516095</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30.00000000000333</gx:fovy>
+			<range>33.58678091463844</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
+		<Point>
+			<coordinates>101.7038050314655,2.833710748075187,25.04423867989015</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="05AB3A196034A3D28B42">
+		<name>Untitled placemark</name>
+		<LookAt>
+			<longitude>101.7038664999937</longitude>
+			<latitude>2.833700996849994</latitude>
+			<altitude>24.55639270516095</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30.00000000000333</gx:fovy>
+			<range>33.58678091463844</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
+		<Point>
+			<coordinates>101.7038593972162,2.833698824297493,24.58202440968399</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0050FAE1C134A3D2F3F3">
+		<name>Untitled path</name>
+		<LookAt>
+			<longitude>101.7037864414361</longitude>
+			<latitude>2.833801186957059</latitude>
+			<altitude>26.38975896162836</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30.00000000000333</gx:fovy>
+			<range>38.73305395488387</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
+		<LineString>
+			<coordinates>
+				101.7038082795537,2.833680139989681,0 101.7038606376858,2.833699753127339,0 101.7038035717265,2.833713152808992,0 101.7038179219603,2.833826452875061,0 
+			</coordinates>
+		</LineString>
+	</Placemark>
+	<Placemark id="05256EC0C234A3D310E3">
+		<name>Untitled placemark</name>
+		<LookAt>
+			<longitude>101.7041530358201</longitude>
+			<latitude>2.833847785969184</latitude>
+			<altitude>24.12540363519616</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30.00000000000333</gx:fovy>
+			<range>109.4585655028459</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
+		<Point>
+			<coordinates>101.704256563772,2.833784321931909,23.65660778829269</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="09850D6CFB34A3D3B780">
+		<name>Untitled path</name>
+		<LookAt>
+			<longitude>101.7043301421855</longitude>
+			<latitude>2.83375353566219</latitude>
+			<altitude>23.3232520921935</altitude>
+			<heading>359.0343627235703</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30.00000000000333</gx:fovy>
+			<range>118.227543678222</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_118D2E62D134A375E5B5</styleUrl>
+		<LineString>
+			<coordinates>
+				101.7044254065814,2.833666739120042,0 101.7043940890727,2.833784724372951,0 
+			</coordinates>
+		</LineString>
 	</Placemark>
 </Document>
 </kml>

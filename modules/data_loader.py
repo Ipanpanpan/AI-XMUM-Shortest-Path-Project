@@ -175,13 +175,15 @@ def get_map() -> Map:
     for _, row in path_df.iterrows():
         start_coords = row['start_point']
         end_coords = row['end_point']
-        distance = row['distance']
+        
 
         start_loc : Location = find_nearest_location(start_coords, XMUM_map, locs_coor)
         end_loc : Location = find_nearest_location(end_coords, XMUM_map, locs_coor)
 
+        distance = geodesic(start_loc.get_coordinate(), end_loc.get_coordinate()).meters
+
         XMUM_map.add_path(start_loc.get_id(), end_loc.get_id(), distance)
-    
+        
     return XMUM_map
 
 
