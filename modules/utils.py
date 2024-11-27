@@ -1,7 +1,17 @@
-print("Hellow WORLD AKU PLORENS!!!!!!!!!!!!!!!")
-print("MONALISA AND DOMINIC")
+import geocoder
+from typing import List, Tuple
+from location import Location
 
-def get_curr_loc():
-    # return the current location of the computer in coordinate (latitude, longitude)
-    pass
+def get_curr_loc() -> Tuple[float, float]:
+    g = geocoder.ip('me')  # get location based on IP address
+    if g.ok:
+        return (g.latlng[0], g.latlng[1]) 
+    else:
+        return (None, None)  
 
+
+def main():
+    print(get_curr_loc())
+
+if __name__ == "__main__":
+    main()

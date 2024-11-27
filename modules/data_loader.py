@@ -1,8 +1,10 @@
 import xml.etree.ElementTree as ET
 import pandas as pd
-#from map import Map
-#from location import Location
+from map import Map
+from location import Location
 from geopy.distance import geodesic
+import numpy as np
+
 
 def parse_path(file_path: str) -> pd.DataFrame:
     # Namespace for KML
@@ -12,39 +14,41 @@ def parse_path(file_path: str) -> pd.DataFrame:
 
     paths = []
 
-
     for placemark in root.findall('.//kml:Placemark', namespaces=namespace):
         # Find LineString elements
         line_string = placemark.find('.//kml:LineString/kml:coordinates', namespaces=namespace)
         if line_string is not None:
-            print(f"Processing LineString: {line_string.text.strip()}")
+            # print(f"Processing LineString: {line_string.text.strip()}")
             coords = line_string.text.strip().split()
-            
+
             if len(coords) < 2:
                 print(f"Skipped path due to insufficient coordinates: {coords}")
                 continue
 
-            for i in range(len(coords) - 1):
+            # Store the coordinates as tuples (lat, lon)
+            points = []
+            for coord in coords:
                 try:
-                    start_coords = coords[i].split(',')
-                    end_coords = coords[i + 1].split(',')
-
-                    start_point = (float(start_coords[1]), float(start_coords[0]))
-                    end_point = (float(end_coords[1]), float(end_coords[0]))
-                    distance = geodesic(start_point, end_point).kilometers
-                    print(f"Start Point: {start_point}, End Point: {end_point}, Distance: {distance}")
-                    paths.append({
-                        'start_point': start_point,
-                        'end_point': end_point,
-                        'distance': distance
-                    })
+                    lon, lat, *_ = map(float, coord.split(','))
+                    points.append((lat, lon))  # Store as (lat, lon)
                 except Exception as e:
-                    print(f"Error parsing path segment: {coords[i]} to {coords[i + 1]} - {e}")
+                    print(f"Error parsing coordinate {coord}: {e}")
+                    continue
 
-    # Return the DataFrame
+            # Split the path into segments of consecutive points
+            for i in range(len(points) - 1):
+                start_point = points[i]
+                end_point = points[i + 1]
+                distance = geodesic(start_point, end_point).meters
+                # print(f"Start Point: {start_point}, End Point: {end_point}, Distance: {distance}")
+                paths.append({
+                    'start_point': start_point,
+                    'end_point': end_point,
+                    'distance': distance
+                })
+
+    # Return the DataFrame with the individual segments
     return pd.DataFrame(paths)
-
-
 
 
 def parse_location(file_path: str) -> pd.DataFrame:
@@ -72,7 +76,7 @@ def parse_location(file_path: str) -> pd.DataFrame:
             # Check the <styleUrl> tag to determine if the location is important
             style_url = placemark.find('kml:styleUrl', namespaces=namespace)
             style_url_text = style_url.text if style_url is not None else ''
-            is_important = style_url_text != '#__managed_style_34B45FA3D13474D10863'  # Important if not matching the "not important" style
+            is_important = style_url_text != '#__managed_style_0AFAFFDB3434A1AD5DE3'  # Important if not matching the "not important" style
 
             locations.append({
                 'id': loc_id,
@@ -84,14 +88,7 @@ def parse_location(file_path: str) -> pd.DataFrame:
 
     return pd.DataFrame(locations)
 
-file_path = r"data\AI shortest path project.kml"
 
-location_df = parse_location(file_path)
-path_df = parse_path(file_path)
-print("Location DataFrame: ")
-print(location_df.head())
-print("Path DataFrame: ")
-print(path_df.head())
 
 def validate_kml(file_path: str, location_df: pd.DataFrame, path_df: pd.DataFrame):
     namespace = {'kml': 'http://www.opengis.net/kml/2.2', 'gx': 'http://www.google.com/kml/ext/2.2'}
@@ -109,27 +106,99 @@ def validate_kml(file_path: str, location_df: pd.DataFrame, path_df: pd.DataFram
     print("Location validation passed!")
 
     # Validate paths
-    kml_paths = []
+    kml_segments = []  # List to store individual path segments
+
     for placemark in root.findall('.//kml:Placemark', namespaces=namespace):
         line_string = placemark.find('.//kml:LineString/kml:coordinates', namespaces=namespace)
         if line_string is not None:
-            kml_paths.append(line_string.text.strip())
+            coords = line_string.text.strip().split()
+            
+            # If there are multiple coordinates, divide them into segments
+            if len(coords) > 1:
+                for i in range(len(coords) - 1):
+                    # Split each pair of coordinates and append to kml_segments
+                    start_coords = coords[i].split(',')
+                    end_coords = coords[i + 1].split(',')
+                    start_point = (float(start_coords[1]), float(start_coords[0]))  # (lat, lon)
+                    end_point = (float(end_coords[1]), float(end_coords[0]))  # (lat, lon)
+                    kml_segments.append((start_point, end_point))
+            else:
+                # Single point path, append as a segment if needed
+                start_coords = coords[0].split(',')
+                start_point = (float(start_coords[1]), float(start_coords[0]))  # (lat, lon)
+                kml_segments.append((start_point, start_point))  # Single point segment
 
-    assert len(kml_paths) == len(path_df), f"Mismatch in number of paths: KML={len(kml_paths)}, DataFrame={len(path_df)}"
+    # Now compare the number of segments in the KML with the number of rows in the DataFrame
+    assert len(kml_segments) == len(path_df), f"Mismatch in number of segments: KML={len(kml_segments)}, DataFrame={len(path_df)}"
     print("Path validation passed!")
 
 
-validate_kml(file_path, location_df, path_df)
 
 
 
 
 
-'''
+def find_nearest_location(coord, map, locs_coor = None):
+    if isinstance(locs_coor, type(np.array([]))):
+        locs_coor = np.array([[loc.get_latitude(), loc.get_longitude()] for loc in map.get_all_loc()])
+    # Convert the input coordinate to a numpy array
+    coord = np.array(coord)
+    
+    # Compute the Euclidean distance between coord and each location in locs_coor
+    distances = np.linalg.norm(locs_coor - coord, axis=1)  # axis=1 to compute row-wise norm (distance for each location)
+    
+    # Find the index of the closest location
+    index = np.argmin(distances)
+    
+    # Return the location corresponding to the minimum distance
+    return map.get_all_loc()[index]
+
 def get_map() -> Map:
-    XMUM_map = Map()
-    loc = Location()
-    XMUM_map.add_loc(loc)
+    file_path = r"data\AI shortest path project.kml"
+    location_df = parse_location(file_path)
+    path_df = parse_path(file_path)
 
+    XMUM_map = Map()
+    
+    for _, row in location_df.iterrows():
+        loc = Location(
+            name = row['loc_name'],
+            latitude = row['latitude'],
+            longitude = row['longitude'],
+            id = row['id'],
+            is_important = row['is_important']
+        )
+        XMUM_map.add_loc(loc)
+    
+
+    locs_coor = np.array([[loc.get_latitude(), loc.get_longitude()] for loc in XMUM_map.get_all_loc()])
+    for _, row in path_df.iterrows():
+        start_coords = row['start_point']
+        end_coords = row['end_point']
+        distance = row['distance']
+
+        start_loc : Location = find_nearest_location(start_coords, XMUM_map, locs_coor)
+        end_loc : Location = find_nearest_location(end_coords, XMUM_map, locs_coor)
+
+        XMUM_map.add_path(start_loc.get_id(), end_loc.get_id(), distance)
+    
     return XMUM_map
-'''
+
+
+
+def main():
+    
+    file_path = r"data\AI shortest path project.kml"
+    location_df = parse_location(file_path)
+    path_df = parse_path(file_path)
+    print("Location DataFrame: ")
+    # print(location_df.head())
+    # print("Path DataFrame: ")
+    # print(path_df.head())
+    validate_kml(file_path, location_df, path_df)
+    xmum : Map= get_map()
+    # print([x.get_name() for x in xmum.get_important_loc()])
+    # print(location_df)
+    print(location_df.loc_name[location_df.is_important == True])
+if __name__ == "__main__":
+    main()

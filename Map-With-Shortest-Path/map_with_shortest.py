@@ -5,8 +5,10 @@ import folium.plugins.antpath
 from pykml import parser
 from folium.plugins import Search
 from geopy.geocoders import Nominatim
+
 from folium import Icon
 import main_screen
+
 
 def play(selected_location,current_coords):
     # Path to the KML file
@@ -69,6 +71,7 @@ def play(selected_location,current_coords):
     current_position = geojson_data["features"][0]["geometry"]["coordinates"][::-1]  # Reverse order for [lat, lon]
     to_location = geojson_data["features"][10]["geometry"]["coordinates"][::-1]  # Second feature's coordinates
     shortest_path = [to_location,current_coords]
+
 
 
     # Add the AntPath with corrected parameters
