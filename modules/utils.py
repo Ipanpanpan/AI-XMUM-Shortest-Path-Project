@@ -20,5 +20,9 @@ def get_curr_loc() -> Tuple[float, float]:
         print(f"Error occurred: {e}")
         return None 
 
+
+def main():
+    print(get_curr_loc())
+
 if __name__ == "__main__":
     main()
