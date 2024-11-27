@@ -185,6 +185,6 @@ def main():
     xmum : Map= get_map()
     # print([x.get_name() for x in xmum.get_important_loc()])
     # print(location_df)
-    print(location_df.loc_name[location_df.is_important == False])
+    print(location_df.loc_name[location_df.is_important == True])
 if __name__ == "__main__":
     main()
