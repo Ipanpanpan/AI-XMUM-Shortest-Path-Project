@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 import pandas as pd
-#from map import Map
+from map import Map
 #from location import Location
 from geopy.distance import geodesic
 
@@ -125,11 +125,10 @@ validate_kml(file_path, location_df, path_df)
 
 
 
-'''
 def get_map() -> Map:
-    XMUM_map = Map()
-    loc = Location()
-    XMUM_map.add_loc(loc)
+    # XMUM_map = Map()
+    # loc = Location()
+    # XMUM_map.add_loc(loc)
 
-    return XMUM_map
-'''
+    # return XMUM_map
+    pass

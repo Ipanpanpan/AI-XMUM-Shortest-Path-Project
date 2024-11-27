@@ -5,6 +5,10 @@ import folium.plugins.antpath
 from pykml import parser
 from folium.plugins import Search
 from geopy.geocoders import Nominatim
+from modules.data_loader import get_map
+from modules.map import Map
+
+
 
 # Path to the KML file
 kml_file_path = 'AI shortest path project.kml'
@@ -57,6 +61,21 @@ geojson_layer.add_to(m)
 # Path
 # Define different locations if needed
 # Set current_position and to_location based on coordinates from the list
+
+XMUM_MAP : Map = get_map()
+
+from typing import List
+from modules.location import Location
+
+
+location_list : List[Location]= XMUM_MAP.get_important_loc()
+
+#User input
+current_loc = "B1"
+to_loc = "library"
+
+XMUM_MAP.shortest_path(current_loc, to_loc)
+
 current_position = geojson_data["features"][0]["geometry"]["coordinates"][::-1]  # Reverse order for [lat, lon]
 to_location = geojson_data["features"][10]["geometry"]["coordinates"][::-1]  # Second feature's coordinates
 shortest_path = [current_position, to_location]
