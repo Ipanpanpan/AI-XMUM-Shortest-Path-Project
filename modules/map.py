@@ -1,7 +1,8 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple, Optional
 from location import Location, Path
 from geopy.distance import geodesic
 from queue import PriorityQueue
+import copy
 
 
 class Map: 
@@ -49,28 +50,38 @@ class Map:
     def __heuristic(self, from_loc : Location, to_loc : Location) -> int:
         return geodesic(from_loc.get_coordinate(), to_loc.get_coordinate()).meters
     
-    def __a_star(self, initial : Location, goal : Location) -> List[List[int]]:
+    def __a_star(self, initial : Location, goal : Location) -> Tuple[Dict[int, Optional[Location]], int]:
         
         node : Location = initial
         previous = {node.get_id() : None}
         
         frontier = PriorityQueue()
-        frontier.put((0, node))
+        frontier.put((0.0, node))
         reached = {node.get_id() : 0}
+        
+        #Start search
         while not frontier.empty():
-            nodep = frontier.get()
-            node = nodep[1]
-            if node == goal:
+            node = frontier.get()[1] #Get the node with the lowest f(n)
+            if node == goal: #Goal reached
                 return previous, reached[goal.get_id()]
+            #Expand node
             for path in node.get_neighbouring_path():
-                child = path.get_end_loc()
-                path_cost_to_child = path.get_distance() + reached[node.get_id()]
+                
+                child = path.get_end_loc() 
+                path_cost_to_child = path.get_distance() + reached[node.get_id()] #g(n)
+
+                #add child to frontier
                 if child.get_id() not in reached or path_cost_to_child < reached[child.get_id()]:
                     reached[child.get_id()] = path_cost_to_child
-                    frontier.put((self.__heuristic(child, goal) + path_cost_to_child, child)) # f(n) = g(n) + h(n)
+                    f_score = path_cost_to_child + self.__heuristic(child, goal)  # f(n) = g(n) + h(n)
+                    frontier.put((f_score, child))
                     previous[child.get_id()] = node
+                    try:
+                        print("previous:", [(self.__nodes[id1] , loc.get_name())for id1, loc in previous.items()])
+                    except:
+                        pass
 
-        return None
+        raise PathNotFoundException("No path found from initial to goal.")
 
     def __greedy(self, initial : Location, goal : Location) -> List[List[int]]:
         
@@ -80,20 +91,26 @@ class Map:
         frontier = PriorityQueue()
         frontier.put((0, node))
         reached = {node.get_id() : 0}
+        
+        #Start search
         while not frontier.empty():
             node = frontier.get()[1]
-            
-            if node == goal:
+
+            if node == goal: #Goal reached
                 return previous, reached[goal.get_id()]
+            
+            #Expand node
             for path in node.get_neighbouring_path():
                 child = path.get_end_loc()
                 path_cost_to_child = path.get_distance() + reached[node.get_id()]
+
+                #add child to frontier
                 if child.get_id() not in reached or path_cost_to_child < reached[child.get_id()]:
                     reached[child.get_id()] = path_cost_to_child
                     frontier.put((self.__heuristic(child, goal), child)) # f(n) =  h(n)
                     previous[child.get_id()] = node
 
-        return None
+        raise PathNotFoundException("No path found from initial to goal.")
 
 
     def __uniform(self, initial : Location, goal : Location) -> List[List[int]]:
@@ -104,20 +121,26 @@ class Map:
         frontier = PriorityQueue()
         frontier.put((0, node))
         reached = {node.get_id() : 0}
+
+        #Start search
         while not frontier.empty():
+            # print_queue(frontier)
             node = frontier.get()[1]
             
-            if node == goal:
+            if node == goal: #Goal reached
                 return previous, reached[goal.get_id()]
+            #Expand node
             for path in node.get_neighbouring_path():
+                
                 child = path.get_end_loc()
                 path_cost_to_child = path.get_distance() + reached[node.get_id()]
+
+                #add child to frontier
                 if child.get_id() not in reached or path_cost_to_child < reached[child.get_id()]:
                     reached[child.get_id()] = path_cost_to_child
-                    frontier.put((path_cost_to_child, child)) # f(n) =  h(n)
+                    frontier.put((path_cost_to_child, child)) # f(n) =  g(n)
                     previous[child.get_id()] = node
-
-        return None
+        raise PathNotFoundException("No path found from initial to goal.")
     
     def __dfs(self, initial : Location, goal : Location) -> List[List[int]]:
               
@@ -141,7 +164,7 @@ class Map:
                     frontier.append(child) # f(n) =  -depth
                     previous[child.get_id()] = node
 
-        return None
+        raise PathNotFoundException("No path found from initial to goal.")
 
 
     def __bfs(self, initial : Location, goal : Location) -> List[List[int]]:
@@ -166,7 +189,7 @@ class Map:
                     frontier.append(child) # f(n) =  -depth
                     previous[child.get_id()] = node
 
-        return None
+        raise PathNotFoundException("No path found from initial to goal.")
 
     def shortest_path(self, from_loc : str, to_loc : str, search_algorithm = "a star") -> List[List[int]]:
         goal = self.get_loc_by_name(to_loc)
@@ -198,4 +221,35 @@ class Map:
         pass
 
 
+from queue import PriorityQueue
+import copy
 
+def print_queue(pq: PriorityQueue):
+    """
+    Prints the contents of a PriorityQueue without modifying the original queue.
+
+    Args:
+        pq (PriorityQueue): The priority queue to print.
+    """
+    # Create a deep copy of the priority queue to avoid modifying the original
+    pq_copy = copy.copy(pq)
+    
+    print("Priority Queue Contents:")
+    print("-------------------------")
+    
+    # Extract all items from the copied queue and store them in a list
+    items = []
+    while not pq_copy.empty():
+        item = pq_copy.get()
+        items.append(item)
+    
+    # Optional: Sort items if not already sorted (PriorityQueue should maintain order)
+    # items.sort()
+    
+    # Print each item
+    for index, item in enumerate(items, start=1):
+        print(f"{index}. Priority: {item[0]}, Item: {item[1].get_name()}")
+    
+    print("-------------------------")
+class PathNotFoundException(Exception):
+    pass
