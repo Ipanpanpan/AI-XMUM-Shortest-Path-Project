@@ -12,39 +12,41 @@ def parse_path(file_path: str) -> pd.DataFrame:
 
     paths = []
 
-
     for placemark in root.findall('.//kml:Placemark', namespaces=namespace):
         # Find LineString elements
         line_string = placemark.find('.//kml:LineString/kml:coordinates', namespaces=namespace)
         if line_string is not None:
             print(f"Processing LineString: {line_string.text.strip()}")
             coords = line_string.text.strip().split()
-            
+
             if len(coords) < 2:
                 print(f"Skipped path due to insufficient coordinates: {coords}")
                 continue
 
-            for i in range(len(coords) - 1):
+            # Store the coordinates as tuples (lat, lon)
+            points = []
+            for coord in coords:
                 try:
-                    start_coords = coords[i].split(',')
-                    end_coords = coords[i + 1].split(',')
-
-                    start_point = (float(start_coords[1]), float(start_coords[0]))
-                    end_point = (float(end_coords[1]), float(end_coords[0]))
-                    distance = geodesic(start_point, end_point).kilometers
-                    print(f"Start Point: {start_point}, End Point: {end_point}, Distance: {distance}")
-                    paths.append({
-                        'start_point': start_point,
-                        'end_point': end_point,
-                        'distance': distance
-                    })
+                    lon, lat, *_ = map(float, coord.split(','))
+                    points.append((lat, lon))  # Store as (lat, lon)
                 except Exception as e:
-                    print(f"Error parsing path segment: {coords[i]} to {coords[i + 1]} - {e}")
+                    print(f"Error parsing coordinate {coord}: {e}")
+                    continue
 
-    # Return the DataFrame
+            # Split the path into segments of consecutive points
+            for i in range(len(points) - 1):
+                start_point = points[i]
+                end_point = points[i + 1]
+                distance = geodesic(start_point, end_point).meters
+                print(f"Start Point: {start_point}, End Point: {end_point}, Distance: {distance}")
+                paths.append({
+                    'start_point': start_point,
+                    'end_point': end_point,
+                    'distance': distance
+                })
+
+    # Return the DataFrame with the individual segments
     return pd.DataFrame(paths)
-
-
 
 
 def parse_location(file_path: str) -> pd.DataFrame:
@@ -109,15 +111,31 @@ def validate_kml(file_path: str, location_df: pd.DataFrame, path_df: pd.DataFram
     print("Location validation passed!")
 
     # Validate paths
-    kml_paths = []
+    kml_segments = []  # List to store individual path segments
+
     for placemark in root.findall('.//kml:Placemark', namespaces=namespace):
         line_string = placemark.find('.//kml:LineString/kml:coordinates', namespaces=namespace)
         if line_string is not None:
-            kml_paths.append(line_string.text.strip())
+            coords = line_string.text.strip().split()
+            
+            # If there are multiple coordinates, divide them into segments
+            if len(coords) > 1:
+                for i in range(len(coords) - 1):
+                    # Split each pair of coordinates and append to kml_segments
+                    start_coords = coords[i].split(',')
+                    end_coords = coords[i + 1].split(',')
+                    start_point = (float(start_coords[1]), float(start_coords[0]))  # (lat, lon)
+                    end_point = (float(end_coords[1]), float(end_coords[0]))  # (lat, lon)
+                    kml_segments.append((start_point, end_point))
+            else:
+                # Single point path, append as a segment if needed
+                start_coords = coords[0].split(',')
+                start_point = (float(start_coords[1]), float(start_coords[0]))  # (lat, lon)
+                kml_segments.append((start_point, start_point))  # Single point segment
 
-    assert len(kml_paths) == len(path_df), f"Mismatch in number of paths: KML={len(kml_paths)}, DataFrame={len(path_df)}"
+    # Now compare the number of segments in the KML with the number of rows in the DataFrame
+    assert len(kml_segments) == len(path_df), f"Mismatch in number of segments: KML={len(kml_segments)}, DataFrame={len(path_df)}"
     print("Path validation passed!")
-
 
 validate_kml(file_path, location_df, path_df)
 
