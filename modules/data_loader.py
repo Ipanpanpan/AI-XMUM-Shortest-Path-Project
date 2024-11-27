@@ -74,7 +74,7 @@ def parse_location(file_path: str) -> pd.DataFrame:
             # Check the <styleUrl> tag to determine if the location is important
             style_url = placemark.find('kml:styleUrl', namespaces=namespace)
             style_url_text = style_url.text if style_url is not None else ''
-            is_important = style_url_text != '#__managed_style_34B45FA3D13474D10863'  # Important if not matching the "not important" style
+            is_important = style_url_text != '#__managed_style_0AFAFFDB3434A1AD5DE3'  # Important if not matching the "not important" style
 
             locations.append({
                 'id': loc_id,
