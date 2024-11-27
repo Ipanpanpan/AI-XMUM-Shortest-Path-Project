@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 import pandas as pd
 from map import Map
-#from location import Location
+from location import Location
 from geopy.distance import geodesic
 
 def parse_path(file_path: str) -> pd.DataFrame:
@@ -16,7 +16,7 @@ def parse_path(file_path: str) -> pd.DataFrame:
         # Find LineString elements
         line_string = placemark.find('.//kml:LineString/kml:coordinates', namespaces=namespace)
         if line_string is not None:
-            print(f"Processing LineString: {line_string.text.strip()}")
+            # print(f"Processing LineString: {line_string.text.strip()}")
             coords = line_string.text.strip().split()
 
             if len(coords) < 2:
@@ -38,7 +38,7 @@ def parse_path(file_path: str) -> pd.DataFrame:
                 start_point = points[i]
                 end_point = points[i + 1]
                 distance = geodesic(start_point, end_point).meters
-                print(f"Start Point: {start_point}, End Point: {end_point}, Distance: {distance}")
+                # print(f"Start Point: {start_point}, End Point: {end_point}, Distance: {distance}")
                 paths.append({
                     'start_point': start_point,
                     'end_point': end_point,
@@ -86,14 +86,7 @@ def parse_location(file_path: str) -> pd.DataFrame:
 
     return pd.DataFrame(locations)
 
-file_path = r"data\AI shortest path project.kml"
 
-location_df = parse_location(file_path)
-path_df = parse_path(file_path)
-print("Location DataFrame: ")
-print(location_df.head())
-print("Path DataFrame: ")
-print(path_df.head())
 
 def validate_kml(file_path: str, location_df: pd.DataFrame, path_df: pd.DataFrame):
     namespace = {'kml': 'http://www.opengis.net/kml/2.2', 'gx': 'http://www.google.com/kml/ext/2.2'}
@@ -137,13 +130,15 @@ def validate_kml(file_path: str, location_df: pd.DataFrame, path_df: pd.DataFram
     assert len(kml_segments) == len(path_df), f"Mismatch in number of segments: KML={len(kml_segments)}, DataFrame={len(path_df)}"
     print("Path validation passed!")
 
-validate_kml(file_path, location_df, path_df)
+
+
 
 
 
 
 
 def get_map() -> Map:
+    file_path = r"data\AI shortest path project.kml"
     location_df = parse_location(file_path)
     path_df = parse_path(file_path)
 
@@ -174,3 +169,22 @@ def get_map() -> Map:
             end_loc.add_neighbouring_path(start_loc, distance)  # Assuming bidirectional paths
     
     return XMUM_map
+
+
+
+def main():
+    
+    file_path = r"data\AI shortest path project.kml"
+    location_df = parse_location(file_path)
+    path_df = parse_path(file_path)
+    print("Location DataFrame: ")
+    # print(location_df.head())
+    # print("Path DataFrame: ")
+    # print(path_df.head())
+    validate_kml(file_path, location_df, path_df)
+    xmum : Map= get_map()
+    # print([x.get_name() for x in xmum.get_important_loc()])
+    # print(location_df)
+    print(location_df.loc_name[location_df.is_important == False])
+if __name__ == "__main__":
+    main()
