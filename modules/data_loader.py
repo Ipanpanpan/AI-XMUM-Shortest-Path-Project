@@ -156,6 +156,16 @@ def get_map() -> Map:
         XMUM_map.add_loc(loc)
         location_objects[(row['latitude'], row['longitude'])] = loc
     
+    def find_nearest_location(coord):
+        nearest_loc = None
+        min_distance = float('inf')
+        for loc_coords, loc in location_objects.items():
+            distance = geodesic(coord, loc_coords).meters
+            if distance < min_distance:
+                min_distance = distance
+                nearest_loc = loc
+        return nearest_loc
+
     for _, row in path_df.iterrows():
         start_coords = row['start_point']
         end_coords = row['end_point']
@@ -165,8 +175,8 @@ def get_map() -> Map:
         end_loc = location_objects.get(end_coords)
 
         if start_loc and end_loc:
-            start_loc.add_neighbouring_path(end_loc, distance)
-            end_loc.add_neighbouring_path(start_loc, distance)
+            start_loc.find_nearest_location(end_loc, distance)
+            end_loc.find_nearest_location(start_loc, distance)
     
     return XMUM_map
 
