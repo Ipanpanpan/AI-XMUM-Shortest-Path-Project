@@ -144,9 +144,33 @@ validate_kml(file_path, location_df, path_df)
 
 
 def get_map() -> Map:
-    # XMUM_map = Map()
-    # loc = Location()
-    # XMUM_map.add_loc(loc)
+    location_df = parse_location(file_path)
+    path_df = parse_path(file_path)
 
-    # return XMUM_map
-    pass
+    XMUM_map = Map()
+    location_objects = {}
+    
+    for _, row in location_df.iterrows():
+        loc = Location(
+            name = row['loc_name'],
+            latitude = row['latitude'],
+            longitude = row['longitude'],
+            id = row['id'],
+            is_important = row['is_important']
+        )
+        XMUM_map.add_loc(loc)
+        location_objects[(row['latitude'], row['longitude'])] = loc
+    
+    for _, row in path_df.iterrows():
+        start_coords = row['start_point']
+        end_coords = row['end_point']
+        distance = row['distance']
+
+        start_loc = location_objects.get(start_coords)
+        end_loc = location_objects.get(end_coords)
+
+        if start_loc and end_loc:
+            start_loc.add_neighbouring_path(end_loc, distance)
+            end_loc.add_neighbouring_path(start_loc, distance)  # Assuming bidirectional paths
+    
+    return XMUM_map
