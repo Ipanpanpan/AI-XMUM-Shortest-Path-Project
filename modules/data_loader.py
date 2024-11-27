@@ -156,6 +156,8 @@ def get_map() -> Map:
         XMUM_map.add_loc(loc)
         location_objects[(row['latitude'], row['longitude'])] = loc
     
+    print(location_objects)
+
     for _, row in path_df.iterrows():
         start_coords = row['start_point']
         end_coords = row['end_point']
@@ -164,6 +166,7 @@ def get_map() -> Map:
         start_loc = location_objects.get(start_coords)
         end_loc = location_objects.get(end_coords)
 
+        
         if start_loc and end_loc:
             start_loc.add_neighbouring_path(end_loc, distance)
             end_loc.add_neighbouring_path(start_loc, distance)  # Assuming bidirectional paths
