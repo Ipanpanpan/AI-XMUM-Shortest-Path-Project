@@ -29,24 +29,15 @@ def main():
     #         dis = geodesic(loc_i.get_coordinate(), loc2.get_coordinate()).meters
     #         city_map.add_path(loc_i.get_id(), loc2.get_id(), dis)
     xmum_map = get_map()
-    
-    city_map.add_loc(xmum_map.get_loc_by_name("A5"))
-    city_map.add_loc(xmum_map.get_loc_by_name("A5 Back Entrance"))
-    city_map.add_loc(xmum_map.get_loc_by_name("s45"))
-    city_map.add_loc(xmum_map.get_loc_by_name("s46"))
-    city_map.add_loc(xmum_map.get_loc_by_name("s48"))
-    city_map.add_loc(xmum_map.get_loc_by_name("A5 Left Entrance"))
-    city_map.add_loc(xmum_map.get_loc_by_name("s47"))
 
     city_map = xmum_map
     # Test Shortest Path
-    start_location = "A5"  # New York
-    end_location = "LY8"     # Los Angeles
+    start_location = "LY7"  # New York
+    end_location = "Entrance Gate"     # Los Angeles
     
 
-
     print(f"Finding shortest path from {start_location} to {end_location}...")
-    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "greedy")
+    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "a*")
     # path, distance = [], 10
     if path:
         print("Shortest path coordinates:")
