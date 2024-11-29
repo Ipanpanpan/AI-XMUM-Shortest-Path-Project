@@ -76,7 +76,7 @@ def parse_location(file_path: str) -> pd.DataFrame:
             # Check the <styleUrl> tag to determine if the location is important
             style_url = placemark.find('kml:styleUrl', namespaces=namespace)
             style_url_text = style_url.text if style_url is not None else ''
-            is_important = style_url_text != '#__managed_style_0AFAFFDB3434A1AD5DE3'  # Important if not matching the "not important" style
+            is_important = style_url_text != '#__managed_style_0D18917A5934A7FA31AE'  # Important if not matching the "not important" style
 
             locations.append({
                 'id': loc_id,
@@ -175,13 +175,15 @@ def get_map() -> Map:
     for _, row in path_df.iterrows():
         start_coords = row['start_point']
         end_coords = row['end_point']
-        distance = row['distance']
+        
 
         start_loc : Location = find_nearest_location(start_coords, XMUM_map, locs_coor)
         end_loc : Location = find_nearest_location(end_coords, XMUM_map, locs_coor)
 
+        distance = geodesic(start_loc.get_coordinate(), end_loc.get_coordinate()).meters
+
         XMUM_map.add_path(start_loc.get_id(), end_loc.get_id(), distance)
-    
+        
     return XMUM_map
 
 

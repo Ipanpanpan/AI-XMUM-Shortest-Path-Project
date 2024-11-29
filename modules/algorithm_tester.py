@@ -17,27 +17,27 @@ def main():
     # Initialize Map
     city_map = Map()
     # random.seed(90)
-    for i in range(100):
-        x, y = random.uniform(0, 10), random.uniform(0, 10)
-        loc_i : Location = Location(id = str(i), name = str(i), latitude= x, longitude= y, is_important= True)
-        city_map.add_loc(loc_i)
-        n_neighbour = random.randint(1, 2)
-        for j in range(n_neighbour):
-            loc2 = random.choice(city_map.get_all_loc())
-            # dis = (sum((k_1 - k_2) ** 2 for k_1, k_2 in 
-            #            zip(loc_i.get_coordinate(), loc2.get_coordinate()))) ** (1/2)
-            dis = geodesic(loc_i.get_coordinate(), loc2.get_coordinate()).meters
-            city_map.add_path(loc_i.get_id(), loc2.get_id(), dis)
-        
-    city_map = get_map()
+    # for i in range(100):
+    #     x, y = random.uniform(0, 10), random.uniform(0, 10)
+    #     loc_i : Location = Location(id = str(i), name = str(i), latitude= x, longitude= y, is_important= True)
+    #     city_map.add_loc(loc_i)
+    #     n_neighbour = random.randint(1, 2)
+    #     for j in range(n_neighbour):
+    #         loc2 = random.choice(city_map.get_all_loc())
+    #         # dis = (sum((k_1 - k_2) ** 2 for k_1, k_2 in 
+    #         #            zip(loc_i.get_coordinate(), loc2.get_coordinate()))) ** (1/2)
+    #         dis = geodesic(loc_i.get_coordinate(), loc2.get_coordinate()).meters
+    #         city_map.add_path(loc_i.get_id(), loc2.get_id(), dis)
+    xmum_map = get_map()
+
+    city_map = xmum_map
     # Test Shortest Path
-    start_location = random.choice(city_map.get_important_loc()).get_name()  # New York
-    end_location = random.choice(city_map.get_important_loc()).get_name()     # Los Angeles
+    start_location = "LY7"  # New York
+    end_location = "Entrance Gate"     # Los Angeles
     
 
-
     print(f"Finding shortest path from {start_location} to {end_location}...")
-    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "greedy")
+    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "a*")
     # path, distance = [], 10
     if path:
         print("Shortest path coordinates:")
