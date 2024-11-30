@@ -4,7 +4,7 @@ from map import Map
 from location import Location
 from geopy.distance import geodesic
 import numpy as np
-
+from map import find_nearest_location
 
 def parse_path(file_path: str) -> pd.DataFrame:
     # Namespace for KML
@@ -138,20 +138,7 @@ def validate_kml(file_path: str, location_df: pd.DataFrame, path_df: pd.DataFram
 
 
 
-def find_nearest_location(coord, map, locs_coor = None):
-    if isinstance(locs_coor, type(np.array([]))):
-        locs_coor = np.array([[loc.get_latitude(), loc.get_longitude()] for loc in map.get_all_loc()])
-    # Convert the input coordinate to a numpy array
-    coord = np.array(coord)
-    
-    # Compute the Euclidean distance between coord and each location in locs_coor
-    distances = np.linalg.norm(locs_coor - coord, axis=1)  # axis=1 to compute row-wise norm (distance for each location)
-    
-    # Find the index of the closest location
-    index = np.argmin(distances)
-    
-    # Return the location corresponding to the minimum distance
-    return map.get_all_loc()[index]
+
 
 def get_map() -> Map:
     file_path = r"data\AI shortest path project.kml"
