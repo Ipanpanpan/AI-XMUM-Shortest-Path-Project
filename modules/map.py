@@ -228,7 +228,7 @@ class Map:
                     path_cost_to_child = path.get_distance() + reached_f[node_f.get_id()]
                     if child.get_id() not in reached_f or path_cost_to_child < reached_f[child.get_id()]:
                         reached_f[child.get_id()] = path_cost_to_child
-                        f_score = path_cost_to_child + self.__heuristic(child, goal)  # f(n) = g(n) + h(n)
+                        f_score = max(2 * path_cost_to_child, path_cost_to_child + self.__heuristic(child, goal))  # f(n) = g(n) + h(n)
                         frontier_f.put((f_score, child))
                         previous_f[child.get_id()] = node_f
                         # if child.get_id() in reached_b:
@@ -247,7 +247,7 @@ class Map:
                     path_cost_to_child = path.get_distance() + reached_b[node_b.get_id()]
                     if child.get_id() not in reached_b or path_cost_to_child < reached_b[child.get_id()]:
                         reached_b[child.get_id()] = path_cost_to_child
-                        f_score = path_cost_to_child + self.__heuristic(child, initial)
+                        f_score = max(2 * path_cost_to_child, path_cost_to_child + self.__heuristic(child, initial))
                         frontier_b.put((f_score, child))
                         previous_b[child.get_id()] = node_b
                         if child.get_id() in reached_f:

@@ -5,8 +5,9 @@ from map import Map
 from typing import List
 from location import Location
 from geopy.distance import geodesic
-import matplotlib.pyplot as plt
+import numpy as np
 
+import matplotlib.pyplot as plt
 
 
 from data_loader import get_map
@@ -14,6 +15,7 @@ from data_loader import get_map
 import random
 
 def main():
+    
     # Initialize Map
     city_map = Map()
     # random.seed(90)
@@ -31,13 +33,13 @@ def main():
     xmum_map = get_map()
 
     city_map = xmum_map
-    # Test Shortest Path
-    start_location = "Clock Tower"  # New York
-    end_location = "Guard House"     # Los Angeles
+    # Test Shortest Paths
+    start_location = "LY8"  # New York
+    end_location = "Entrance Gate"     # Los Angeles
     
 
     print(f"Finding shortest path from {start_location} to {end_location}...")
-    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "iterative deepening a star")
+    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "bidirectional")
     # path, distance = [], 10
     if path:
         print("Shortest path coordinates:")
