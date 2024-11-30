@@ -334,7 +334,7 @@ class Map:
         elif search_algorithm.lower() in ["bfs", "breadth first search", "breadth first"]:
             previous, distance = self.__bfs(initial, goal)
         elif search_algorithm.lower() in ["bidir", "bidirectional heuristic", "bidirectional"]:
-            previous, distance = self.__bidirectional_a_star(initial, goal)
+            previous, distance = self.__bidirectional_heuristic(initial, goal)
         elif search_algorithm.lower() in ["id a star", "ida*", "iterative deepening a*", "iterative deepening a star", "deepening a*", "deepening a star"]:
             previous, distance = self.__iterative_deepening_a_star(initial, goal)
         else:
