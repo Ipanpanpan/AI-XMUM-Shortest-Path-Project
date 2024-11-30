@@ -39,31 +39,32 @@ class Screen1(ctk.CTkFrame):
         self.grid(row=0, column=0, sticky="nsew")  # Stretch to fill parent container
 
         # Left frame
-        left_frame = ctk.CTkFrame(self, width=350)  # Half of the screen width
+        left_frame = ctk.CTkFrame(self, width=600) 
         left_frame.pack(side="left", fill="both", expand=True)
 
         # UI elements for Screen 1
-        label = ctk.CTkLabel(left_frame, text="Welcome to \nXMUM Shortest Path!", font=("Comic Sans", 45))
-        label.pack(pady=(200, 5))
+        label = ctk.CTkLabel(left_frame, text="Welcome to \nXMUM Shortest Path!", font=("Comic Sans", 35))
+        label.pack(pady=(200, 5),padx=50)
 
         # To verify current location
         verify = ctk.CTkButton(left_frame, text="Click to verify your current location", width=250,
                                 command=lambda: parent.show_frame(parent.frame2))
         verify.pack(pady=15)
 
+        # To select location
+        desc = ctk.CTkLabel(left_frame,
+                            text="Why take the LONG way when you can take the RIGHT way? \n Let us guide you, shortcut style!;)",
+                            font=("Comic Sans", 15))
+        desc.pack(pady=(15, 5))
+
         # Right frame
-        right_frame = ctk.CTkFrame(self, width=550)
+        right_frame = ctk.CTkFrame(self, width=350)
         right_frame.pack(side="right", fill="both", expand=True)
 
-        # To select location
-        desc = ctk.CTkLabel(right_frame,
-                            text="Why take the long way when you can take the right way? \n Let us guide you, shortcut style!",
-                            font=("Lato", 20))
-        desc.pack(pady=(200, 5))
 
         # To select location
         question = ctk.CTkLabel(right_frame, text="> Where are you heading to?", font=("Lato", 30))
-        question.pack(pady=(20, 5))
+        question.pack(pady=(200, 5))
 
         important_locations = xmu.get_important_loc()
         important_label = sorted([loc.get_name() for loc in important_locations])
@@ -75,6 +76,7 @@ class Screen1(ctk.CTkFrame):
         # Set default value
         self.choices.set(important_label[0])
         self.choices.pack(pady=(15, 0))
+
         # Add a button
         def button_action():
             to_location = self.choices.get()  # Get selected location from dropdown
@@ -88,8 +90,32 @@ class Screen1(ctk.CTkFrame):
                                 )
         button.pack(pady=(15, 0))
 
+        # Set dev tools
+        new_frame = ctk.CTkFrame(right_frame,fg_color="black")
+        new_frame.pack(pady=18,padx=135, fill="both")
 
+        text = ctk.CTkLabel(new_frame,  text="Dev Tools", font=("Lato",12))
+        text.pack(side="left", padx=(15,0))
 
+        # Choosing search algorithms
+        algo_choices = xmu.get_all_search_algorithm()
+        def choose_algo():
+            self.chosen_algo = ctk.CTkOptionMenu(right_frame,
+                                    values=algo_choices, width=30,
+                                    font=('Lato', 16), fg_color="black")
+            # Default
+            self.chosen_algo.set(algo_choices[0])     
+            self.chosen_algo.pack(pady= 0)
+
+        # Checkbox for the item
+        def on_check():
+            if checkbox.get() == 1:  # If the checkbox is selected
+                choose_algo()
+            else:
+                self.chosen_algo.pack_forget()
+
+        checkbox = ctk.CTkCheckBox(new_frame, text="", command=on_check)
+        checkbox.pack(side="right", padx=(90,0))
 
 class Screen2(ctk.CTkFrame):
     def __init__(self, parent):
@@ -160,7 +186,6 @@ class Screen2(ctk.CTkFrame):
 
         # Add right-click menu to the map
         self.map_widget.add_right_click_menu_command(label="Confirm Location", command=change_current, pass_coords=True)
-
 
 
 if __name__ == "__main__":
