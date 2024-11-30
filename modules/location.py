@@ -13,6 +13,12 @@ class Location:
         if isinstance(other, Location):
             return self.get_id() == other.get_id()
         return False
+    
+    def __hash__(self):
+        return hash(self.get_id())
+    
+    def __repr__(self):
+        return f"Location(name={self.__name}, id={self.__id})"
 
     def get_name(self) -> str:
         return self.__name
@@ -66,6 +72,10 @@ class Path:
         if isinstance(other, Path):
             return (self.__start_node == other.__start_node and
                     self.__end_node == other.__end_node)
+    
+    def __repr__(self):
+        return f"Path(start={self.__start_node.get_name()}, end={self.__end_node.get_name()}, distance={self.__weight})"
+
 
     def get_start_loc(self) -> Location:
         return self.__start_node
@@ -83,8 +93,14 @@ class Path:
         self.__end_node = loc
 
 def main():
-    pass
-
+    loc1 = Location(name="Clock Tower", latitude=1.0, longitude=2.0, id="A", is_important=True)
+    loc2 = Location(name="Guard House", latitude=3.0, longitude=4.0, id="B", is_important=False)
+    loc3 = Location(name="Clock Tower Duplicate", latitude=1.0, longitude=2.0, id="A", is_important=True)
+    
+    print(loc1 == loc3)  # True (IDs are the same)
+    print(loc1 == loc2)  # False
+    print(hash(loc1), hash(loc3), hash(loc2))  # loc1 and loc3 hashes should match
+    print(loc1)  # Location(name=Clock Tower, id=A)
 
 if __name__ == "__main__":
     main()

@@ -23,7 +23,7 @@ class Map:
         loc2.add_neighbouring_path(loc1, distance)
 
     def get_all_search_algorithm(self) -> List[str]:
-        return ["a star", "greedy", "uniform", "dfs", "bfs", "bidirectional a star"]
+        return ["a star", "greedy", "uniform", "dfs", "bfs", "bidirectional a star", "iterative deepening a star"]
     
     def get_imp_loc_id_mapping(self) -> Dict[str, str]:
         loc_id = {}
@@ -269,7 +269,50 @@ class Map:
         else:
             return None
 
-                    
+    def __iterative_deepening_a_star (self, initial : Location, goal : Location) -> Tuple[List[List[int]], int]:
+        def dfs(current: Location, g: float, threshold: float, path: List[Location], visited: set) -> Tuple[Optional[float], Optional[List[Location]]]:
+            f = g + self.__heuristic(current, goal)
+            if f > threshold:
+                return f, None
+            if current == goal:
+                return g, path[:]
+            
+            min_threshold = float('inf')
+            for neighbor_path in current.get_neighbouring_path():
+                neighbor = neighbor_path.get_end_loc()
+                if neighbor in visited:
+                    continue
+
+                visited.add(neighbor)
+                path.append(neighbor)
+                cost_to_neighbor = neighbor_path.get_distance()
+
+                result, solution_path = dfs(neighbor, g + cost_to_neighbor, threshold, path, visited)
+                if solution_path is not None:
+                    return result, solution_path
+                
+                min_threshold = min(min_threshold, result)
+                path.pop()
+                visited.remove(neighbor)
+
+            return min_threshold, None
+        
+        threshold = self.__heuristic(initial, goal)
+        path = [initial]
+
+        print(f"Initial: {initial}, Type: {type(initial)}, Hash: {hash(initial)}")
+        print(f"Goal: {goal}, Type: {type(goal)}, Hash: {hash(goal)}")
+
+
+        while True:
+            visited = {initial}
+            result, solution_path = dfs(initial, 0, threshold, path, visited)
+            if solution_path is not None:
+                return [[loc.get_coordinate() for loc in solution_path], result]
+            if result == float('inf'):
+                raise PathNotFoundException("No path found from initial to goal.")
+            threshold = result
+                           
         
     def shortest_path(self, from_loc : Union[str, list], to_loc : str, search_algorithm = "a star") -> List[List[int]]:
         if isinstance(from_loc, list) and len(from_loc) == 2:
@@ -295,6 +338,8 @@ class Map:
             previous, distance = self.__bfs(initial, goal)
         elif search_algorithm.lower() in ["bidirectional a star", "bidirectional a*", "bidirectional astar", "bidirectional"]:
             previous, distance = self.__bidirectional_a_star(initial, goal)
+        elif search_algorithm.lower() in ["id a star", "ida*", "iterative deepening a*", "iterative deepening a star", "deepening a*", "deepening a star"]:
+            previous, distance = self.__iterative_deepening_a_star(initial, goal)
         else:
             raise ValueError("Invalid search algorithm.")
         

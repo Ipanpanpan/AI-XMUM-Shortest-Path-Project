@@ -67,7 +67,7 @@ class Screen1(ctk.CTkFrame):
         question.pack(pady=(200, 5))
 
         important_locations = xmu.get_important_loc()
-        important_label = [loc.get_name() for loc in important_locations]
+        important_label = sorted([loc.get_name() for loc in important_locations])
         # Create a dropdown menu (CTkOptionMenu)
         self.choices = ctk.CTkOptionMenu(right_frame,
                                     values=important_label, width=200,
