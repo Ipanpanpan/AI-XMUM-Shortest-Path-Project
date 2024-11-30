@@ -22,6 +22,8 @@ class Map:
         loc1.add_neighbouring_path(loc2, distance)
         loc2.add_neighbouring_path(loc1, distance)
 
+    def get_all_search_algorithm(self) -> List[str]:
+        return ["a star", "greedy", "uniform", "dfs", "bfs", "bidirectional a star"]
     
     def get_imp_loc_id_mapping(self) -> Dict[str, str]:
         loc_id = {}
