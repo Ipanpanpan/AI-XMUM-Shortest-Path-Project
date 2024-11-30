@@ -3,7 +3,6 @@ from location import Location, Path
 from geopy.distance import geodesic
 from queue import PriorityQueue
 import numpy as np
-import copy
 
 
 class Map: 
@@ -22,12 +21,14 @@ class Map:
         loc1.add_neighbouring_path(loc2, distance)
         loc2.add_neighbouring_path(loc1, distance)
 
+    def get_all_search_algorithm(self) -> List[str]:
+        return ["a star", "greedy", "uniform", "dfs", "bfs", "bidirectional heuristic", "iterative deepening a star"]
     
     def get_imp_loc_id_mapping(self) -> Dict[str, str]:
         loc_id = {}
         important_loc = self.get_important_loc()
         for loc in important_loc:
-            loc_id[loc.get_name()] = loc.get_id()
+            loc_id[loc.get_name().strip().lower()] = loc.get_id()
         return loc_id
     
     def get_all_loc(self) -> List[Location]:
@@ -192,7 +193,7 @@ class Map:
 
         raise PathNotFoundException("No path found from initial to goal.")
 
-    def __bidirectional_a_star(self, initial : Location, goal : Location) -> List[List[int]]:
+    def __bidirectional_heuristic(self, initial : Location, goal : Location) -> List[List[int]]:
 
         node_f : Location = initial
         node_b : Location = goal
@@ -307,7 +308,48 @@ class Map:
 
             depth_limit += 1      
         
+    def __iterative_deepening_a_star (self, initial : Location, goal : Location) -> Tuple[List[List[int]], int]:
+        def dfs(current: Location, g: float, threshold: float, path: List[Location], visited: set) -> Tuple[Optional[float], Optional[List[Location]]]:
+            f = g + self.__heuristic(current, goal)
+            if f > threshold:
+                return f, None
+            if current == goal:
+                return g, path[:]
+            
+            min_threshold = float('inf')
+            for neighbor_path in current.get_neighbouring_path():
+                neighbor = neighbor_path.get_end_loc()
+                if neighbor in visited:
+                    continue
 
+                visited.add(neighbor)
+                path.append(neighbor)
+                cost_to_neighbor = neighbor_path.get_distance()
+
+                result, solution_path = dfs(neighbor, g + cost_to_neighbor, threshold, path, visited)
+                if solution_path is not None:
+                    return result, solution_path
+                
+                min_threshold = min(min_threshold, result)
+                path.pop()
+                visited.remove(neighbor)
+
+            return min_threshold, None
+        
+        threshold = self.__heuristic(initial, goal)
+        path = [initial]
+
+
+
+        while True:
+            visited = {initial}
+            result, solution_path = dfs(initial, 0, threshold, path, visited)
+            if solution_path is not None:
+                return [[loc.get_coordinate() for loc in solution_path], result]
+            if result == float('inf'):
+                raise PathNotFoundException("No path found from initial to goal.")
+            threshold = result
+                           
         
     def shortest_path(self, from_loc : Union[str, list], to_loc : str, search_algorithm = "a star") -> List[List[int]]:
         if isinstance(from_loc, list) and len(from_loc) == 2:
@@ -331,8 +373,10 @@ class Map:
 
         elif search_algorithm.lower() in ["bfs", "breadth first search", "breadth first"]:
             previous, distance = self.__bfs(initial, goal)
-        elif search_algorithm.lower() in ["bidirectional a star", "bidirectional a*", "bidirectional astar", "bidirectional"]:
-            previous, distance = self.__bidirectional_a_star(initial, goal)
+        elif search_algorithm.lower() in ["bidir", "bidirectional heuristic", "bidirectional"]:
+            previous, distance = self.__bidirectional_heuristic(initial, goal)
+        elif search_algorithm.lower() in ["id a star", "ida*", "iterative deepening a*", "iterative deepening a star", "deepening a*", "deepening a star"]:
+            previous, distance = self.__iterative_deepening_a_star(initial, goal)
         else:
             raise ValueError("Invalid search algorithm.")
         
@@ -354,7 +398,7 @@ class Map:
         pass
 
 def find_nearest_location(coord, map, locs_coor = None):
-    if isinstance(locs_coor, type(np.array([]))):
+    if not isinstance(locs_coor, type(np.array([]))):
         locs_coor = np.array([[loc.get_latitude(), loc.get_longitude()] for loc in map.get_all_loc()])
     # Convert the input coordinate to a numpy array
     coord = np.array(coord)
