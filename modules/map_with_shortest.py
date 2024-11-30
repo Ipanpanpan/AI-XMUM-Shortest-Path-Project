@@ -6,6 +6,8 @@ import folium.plugins
 import folium.plugins.antpath
 import math
 from data_loader import find_nearest_location
+from geopy.distance import geodesic
+
 
 def play(from_location,to_location):
     xmu = Map()
@@ -13,7 +15,9 @@ def play(from_location,to_location):
     # Get a list of important locations
     important_locations = xmu.get_important_loc()
     print(from_location, to_location)
-    shortest_path, distance = xmu.shortest_path([2.834845, 101.702392], to_loc=to_location)
+    shortest_path, distance = xmu.shortest_path(from_location, to_loc=to_location)
+    shortest_path.insert(0, from_location)
+    distance += geodesic(shortest_path[0], shortest_path[1]).meters
     # Create a dictionary mapping names to coordinates
     locations_dict = {loc.get_name(): loc.get_coordinate() for loc in important_locations}
 
