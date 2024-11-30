@@ -314,7 +314,7 @@ class Map:
         pass
 
 def find_nearest_location(coord, map, locs_coor = None):
-    if isinstance(locs_coor, type(np.array([]))):
+    if not isinstance(locs_coor, type(np.array([]))):
         locs_coor = np.array([[loc.get_latitude(), loc.get_longitude()] for loc in map.get_all_loc()])
     # Convert the input coordinate to a numpy array
     coord = np.array(coord)
