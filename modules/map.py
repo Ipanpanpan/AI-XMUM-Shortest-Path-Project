@@ -1,7 +1,9 @@
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Union
 from location import Location, Path
 from geopy.distance import geodesic
 from queue import PriorityQueue
+from data_loader import find_nearest_location
+
 import copy
 
 
@@ -191,9 +193,81 @@ class Map:
 
         raise PathNotFoundException("No path found from initial to goal.")
 
-    def shortest_path(self, from_loc : str, to_loc : str, search_algorithm = "a star") -> List[List[int]]:
+    def __bidirectional_a_star(self, initial : Location, goal : Location) -> List[List[int]]:
+
+        node_f : Location = initial
+        node_b : Location = goal
+
+        frontier_f = PriorityQueue()
+        frontier_b = PriorityQueue()
+
+        frontier_f.put((0.0, node_f))
+        frontier_b.put((0.0, node_b))
+
+        reached_f = {initial.get_id() : 0}
+        previous_f = {initial.get_id() : None}
+
+        reached_b = {goal.get_id() : 0}
+        previous_b = {goal.get_id() : None}
+
+        solution = None
+
+        while not frontier_f.empty() and not frontier_b.empty():
+            if frontier_f.queue[0][0] < frontier_b.queue[0][0]:
+                #Expand node at f
+                node_f = frontier_f.get()[1]
+                for path in node_f.get_neighbouring_path():
+                    child = path.get_end_loc()
+                    path_cost_to_child = path.get_distance() + reached_f[node_f.get_id()]
+                    if child.get_id() not in reached_f or path_cost_to_child < reached_f[child.get_id()]:
+                        reached_f[child.get_id()] = path_cost_to_child
+                        f_score = path_cost_to_child + self.__heuristic(child, goal)  # f(n) = g(n) + h(n)
+                        frontier_f.put((f_score, child))
+                        previous_f[child.get_id()] = node_f
+                        if child.get_id() in reached_b:
+                            solution = child
+                            break
+            else:
+                #Expand node at b
+                node_b = frontier_b.get()[1]
+                for path in node_b.get_neighbouring_path():
+                    child = path.get_end_loc()
+                    path_cost_to_child = path.get_distance() + reached_b[node_b.get_id()]
+                    if child.get_id() not in reached_b or path_cost_to_child < reached_b[child.get_id()]:
+                        reached_b[child.get_id()] = path_cost_to_child
+                        f_score = path_cost_to_child + self.__heuristic(child, initial)
+                        frontier_b.put((f_score, child))
+                        previous_b[child.get_id()] = node_b
+                        if child.get_id() in reached_f:
+                            solution = child
+                            break
+        
+        if solution is not None:
+            path = []
+            n = solution
+            while n is not None:
+                path.insert(0, n.get_coordinate())
+                n = previous_f[n.get_id()]
+            n = solution
+            while n is not None:
+                path.append(n.get_coordinate())
+                n = previous_b[n.get_id()]
+            return path, reached_f[solution.get_id()] + reached_b[solution.get_id()]
+        else:
+            return None
+
+                    
+        
+    def shortest_path(self, from_loc : Union[str, list], to_loc : str, search_algorithm = "a star") -> List[List[int]]:
+        if isinstance(from_loc, list) and len(from_loc) == 2:
+            initial = find_nearest_location(from_loc, self)
+        elif isinstance(from_loc, str):
+            initial = self.get_loc_by_name(from_loc)
+        else:
+            raise ValueError("Invalid from_loc.")
+        
         goal = self.get_loc_by_name(to_loc)
-        initial = self.get_loc_by_name(from_loc)
+        
         
         if search_algorithm.lower() in ["a star", "a*"]:
             previous, distance = self.__a_star(initial, goal)
@@ -206,6 +280,14 @@ class Map:
 
         elif search_algorithm.lower() in ["bfs", "breadth first search", "breadth first"]:
             previous, distance = self.__bfs(initial, goal)
+        elif search_algorithm.lower() in ["bidirectional a star", "bidirectional a*", "bidirectional astar", "bidirectional"]:
+            previous, distance = self.__bidirectional_a_star(initial, goal)
+        else:
+            raise ValueError("Invalid search algorithm.")
+        
+        if isinstance(previous, list):
+            return previous, distance
+
 
         if previous is not None:
             path_coordinate = []
@@ -221,35 +303,6 @@ class Map:
         pass
 
 
-from queue import PriorityQueue
-import copy
 
-def print_queue(pq: PriorityQueue):
-    """
-    Prints the contents of a PriorityQueue without modifying the original queue.
-
-    Args:
-        pq (PriorityQueue): The priority queue to print.
-    """
-    # Create a deep copy of the priority queue to avoid modifying the original
-    pq_copy = copy.copy(pq)
-    
-    print("Priority Queue Contents:")
-    print("-------------------------")
-    
-    # Extract all items from the copied queue and store them in a list
-    items = []
-    while not pq_copy.empty():
-        item = pq_copy.get()
-        items.append(item)
-    
-    # Optional: Sort items if not already sorted (PriorityQueue should maintain order)
-    # items.sort()
-    
-    # Print each item
-    for index, item in enumerate(items, start=1):
-        print(f"{index}. Priority: {item[0]}, Item: {item[1].get_name()}")
-    
-    print("-------------------------")
 class PathNotFoundException(Exception):
     pass
