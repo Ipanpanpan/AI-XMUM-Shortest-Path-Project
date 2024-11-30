@@ -76,26 +76,13 @@ class Screen1(ctk.CTkFrame):
         # Set default value
         self.choices.set(important_label[0])
         self.choices.pack(pady=(15, 0))
-
-        # Add a button
-        def button_action():
-            to_location = self.choices.get()  # Get selected location from dropdown
-            from_location = list(parent.frame2.current_coordinates) 
-            map_with_shortest.play(from_location,to_location)
-
-        button = ctk.CTkButton(right_frame, text="Select Location", command=button_action, width=20,
-                                fg_color="black",  # Button's primary color
-                                hover_color="green",  # Button's color when hovered
-                                text_color="white",  # Text color on the button
-                                )
-        button.pack(pady=(15, 0))
-
+        
         # Set dev tools
-        new_frame = ctk.CTkFrame(right_frame,fg_color="black")
-        new_frame.pack(pady=18,padx=135, fill="both")
+        new_frame = ctk.CTkFrame(right_frame,fg_color="black",width=20)
+        new_frame.pack(pady=18,padx=163, fill="x")
 
-        text = ctk.CTkLabel(new_frame,  text="Dev Tools", font=("Lato",12))
-        text.pack(side="left", padx=(15,0))
+        text = ctk.CTkLabel(new_frame,  text="Custom Search", font=("Lato",12))
+        text.pack(side="left", padx=(5,0))
 
         # Choosing search algorithms
         algo_choices = xmu.get_all_search_algorithm()
@@ -105,7 +92,9 @@ class Screen1(ctk.CTkFrame):
                                     font=('Lato', 16), fg_color="black")
             # Default
             self.chosen_algo.set(algo_choices[0])     
-            self.chosen_algo.pack(pady= 0)
+            self.chosen_algo.pack(pady= 15)
+    
+            
 
         # Checkbox for the item
         def on_check():
@@ -114,8 +103,31 @@ class Screen1(ctk.CTkFrame):
             else:
                 self.chosen_algo.pack_forget()
 
-        checkbox = ctk.CTkCheckBox(new_frame, text="", command=on_check)
-        checkbox.pack(side="right", padx=(90,0))
+        checkbox = ctk.CTkCheckBox(new_frame, text="", command=on_check,width=100,hover=True)
+        checkbox.pack(side="right",padx=12)
+
+        def get_chosen_algo():
+            if hasattr(self, 'chosen_algo') and self.chosen_algo:  # Check if it exists
+                return self.chosen_algo.get()
+            else:
+                return 'a star'  # Or some default value if no selection is available
+
+
+        # Add a button
+        def button_action():
+            to_location = self.choices.get()  # Get selected location from dropdown
+            from_location = list(parent.frame2.current_coordinates)
+            chosen_algorithm = get_chosen_algo()
+            map_with_shortest.play(from_location,to_location,chosen_algorithm)
+
+        button = ctk.CTkButton(right_frame, text="Select Location", command=button_action, width=20,
+                                fg_color="black",  # Button's primary color
+                                hover_color="green",  # Button's color when hovered
+                                text_color="white",  # Text color on the button
+                                )
+        button.pack(pady=(15, 0))
+
+
 
 class Screen2(ctk.CTkFrame):
     def __init__(self, parent):
