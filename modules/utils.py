@@ -1,17 +1,31 @@
-import geocoder
+import requests
 from typing import List, Tuple
 from location import Location
 
 def get_curr_loc() -> Tuple[float, float]:
-    g = geocoder.ip('me')  # get location based on IP address
-    if g.ok:
-        return (g.latlng[0], g.latlng[1]) 
-    else:
-        return (None, None)  
+
+    # Send a GET request to ipinfo.io to get geolocation data based on the public IP
+    try:
+        response = requests.get('http://ipinfo.io/json')
+        data = response.json()
+
+        # Extract the location (latitude and longitude)
+        loc = data.get('loc', '').split(',')
+        if len(loc) == 2:
+            latitude = float(loc[0])
+            longitude = float(loc[1])
+            return latitude, longitude
+        else:
+            raise ValueError("Location data is incomplete or invalid.")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error while fetching location: {e}")
+        return None
 
 
 def main():
     print(get_curr_loc())
+
 
 if __name__ == "__main__":
     main()
