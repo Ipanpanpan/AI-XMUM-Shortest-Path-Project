@@ -267,7 +267,47 @@ class Map:
         else:
             return None
 
-                    
+    def __dfs_with_depth_limit(self, node: Location, goal: Location, depth_limit: int) -> Tuple[Dict[str, Optional[Location]], Dict[str, int]]:
+        reached = {node.get_id(): 0}
+        previous = {node.get_id(): None}
+        frontier = {node}
+
+        while frontier:
+            node = frontier.pop()
+
+            if node == goal:
+                return previous, reached
+            
+            if reached[node.get_id()] < depth_limit:
+                for path in node.get_neighbouring_path():
+                    child = path.get_end_loc()
+                    path_cost_to_child = path.get_distance() + reached[node.get_id()]
+                    if child.get_id() not in reached or path_cost_to_child < reached[child.get_id()]:
+                        reached[child.get_id()] = path_cost_to_child
+                        frontier.append(child)
+                        previous[child.get_id()] = node
+
+        return None, None
+    
+
+
+    def __iterative_deepening_search(self, initial: Location, goal: Location) -> List[List[int]]:
+        depth_limit = 0
+        while True:
+            previous, reached = self.__dfs_with_depth_limit(initial, goal, depth_limit)
+
+            if previous is not None:
+                path = []
+                n = goal
+
+                while n is not None:
+                    path.insert(0, n.get_coordinate())
+                    n = previous[n.get_id()]
+                return path, reached[goal.get_id()]
+
+            depth_limit += 1      
+        
+
         
     def shortest_path(self, from_loc : Union[str, list], to_loc : str, search_algorithm = "a star") -> List[List[int]]:
         if isinstance(from_loc, list) and len(from_loc) == 2:
@@ -330,3 +370,4 @@ def find_nearest_location(coord, map, locs_coor = None):
 
 class PathNotFoundException(Exception):
     pass
+
