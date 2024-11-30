@@ -27,7 +27,7 @@ class Map:
         loc_id = {}
         important_loc = self.get_important_loc()
         for loc in important_loc:
-            loc_id[loc.get_name()] = loc.get_id()
+            loc_id[loc.get_name().strip().lower()] = loc.get_id()
         return loc_id
     
     def get_all_loc(self) -> List[Location]:

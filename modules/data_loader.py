@@ -76,7 +76,7 @@ def parse_location(file_path: str) -> pd.DataFrame:
             # Check the <styleUrl> tag to determine if the location is important
             style_url = placemark.find('kml:styleUrl', namespaces=namespace)
             style_url_text = style_url.text if style_url is not None else ''
-            is_important = style_url_text != '#__managed_style_049182584E34AE9F88CF'  # Important if not matching the "not important" style
+            is_important = style_url_text != '#__managed_style_0D431BAC7434B0BBDE51'  # Important if not matching the "not important" style
 
             locations.append({
                 'id': loc_id,
@@ -149,7 +149,7 @@ def get_map() -> Map:
     
     for _, row in location_df.iterrows():
         loc = Location(
-            name = row['loc_name'].strip().lower(),
+            name = row['loc_name'].strip(),
             latitude = row['latitude'],
             longitude = row['longitude'],
             id = row['id'],
