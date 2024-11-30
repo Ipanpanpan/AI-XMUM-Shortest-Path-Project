@@ -149,7 +149,7 @@ def get_map() -> Map:
     
     for _, row in location_df.iterrows():
         loc = Location(
-            name = row['loc_name'],
+            name = row['loc_name'].strip().lower(),
             latitude = row['latitude'],
             longitude = row['longitude'],
             id = row['id'],

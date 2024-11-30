@@ -46,7 +46,7 @@ class Map:
         return self.__nodes[id]
 
     def get_loc_by_name(self, name : str) -> Location:
-        return self.__nodes[self.get_imp_loc_id_mapping()[name]]
+        return self.__nodes[self.get_imp_loc_id_mapping()[name.strip().lower()]]
 
     def __heuristic(self, from_loc : Location, to_loc : Location) -> int:
         return geodesic(from_loc.get_coordinate(), to_loc.get_coordinate()).meters
@@ -209,12 +209,19 @@ class Map:
         reached_b = {goal.get_id() : 0}
         previous_b = {goal.get_id() : None}
 
+        expanded_f = []
+        expanded_b = []
+
         solution = None
 
         while not frontier_f.empty() and not frontier_b.empty():
             if frontier_f.queue[0][0] < frontier_b.queue[0][0]:
                 #Expand node at f
                 node_f = frontier_f.get()[1]
+                expanded_f.append(node_f.get_id())
+                if node_f.get_id() in expanded_b:
+                    solution = node_f
+                    break
                 for path in node_f.get_neighbouring_path():
                     child = path.get_end_loc()
                     path_cost_to_child = path.get_distance() + reached_f[node_f.get_id()]
@@ -223,12 +230,17 @@ class Map:
                         f_score = path_cost_to_child + self.__heuristic(child, goal)  # f(n) = g(n) + h(n)
                         frontier_f.put((f_score, child))
                         previous_f[child.get_id()] = node_f
-                        if child.get_id() in reached_b:
-                            solution = child
-                            break
+                        # if child.get_id() in reached_b:
+                        #     solution = child
+                        #     break
             else:
                 #Expand node at b
                 node_b = frontier_b.get()[1]
+                expanded_b.append(node_b.get_id())
+                if node_b.get_id() in expanded_f:
+                    solution = node_b
+                    break
+
                 for path in node_b.get_neighbouring_path():
                     child = path.get_end_loc()
                     path_cost_to_child = path.get_distance() + reached_b[node_b.get_id()]

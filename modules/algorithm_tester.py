@@ -32,8 +32,8 @@ def main():
 
     city_map = xmum_map
     # Test Shortest Path
-    start_location = "LY7"  # New York
-    end_location = "Entrance Gate"     # Los Angeles
+    start_location = "Clock Tower"  # New York
+    end_location = "Guard House"     # Los Angeles
     
 
     print(f"Finding shortest path from {start_location} to {end_location}...")
