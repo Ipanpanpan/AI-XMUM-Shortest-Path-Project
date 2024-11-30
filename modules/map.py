@@ -3,7 +3,6 @@ from location import Location, Path
 from geopy.distance import geodesic
 from queue import PriorityQueue
 import numpy as np
-import copy
 
 
 class Map: 
@@ -194,7 +193,7 @@ class Map:
 
         raise PathNotFoundException("No path found from initial to goal.")
 
-    def __bidirectional_a_star(self, initial : Location, goal : Location) -> List[List[int]]:
+    def __bidirectional_heuristic(self, initial : Location, goal : Location) -> List[List[int]]:
 
         node_f : Location = initial
         node_b : Location = goal
@@ -300,8 +299,6 @@ class Map:
         threshold = self.__heuristic(initial, goal)
         path = [initial]
 
-        print(f"Initial: {initial}, Type: {type(initial)}, Hash: {hash(initial)}")
-        print(f"Goal: {goal}, Type: {type(goal)}, Hash: {hash(goal)}")
 
 
         while True:
@@ -336,7 +333,7 @@ class Map:
 
         elif search_algorithm.lower() in ["bfs", "breadth first search", "breadth first"]:
             previous, distance = self.__bfs(initial, goal)
-        elif search_algorithm.lower() in ["bidirectional a star", "bidirectional a*", "bidirectional astar", "bidirectional"]:
+        elif search_algorithm.lower() in ["bidir", "bidirectional heuristic", "bidirectional"]:
             previous, distance = self.__bidirectional_a_star(initial, goal)
         elif search_algorithm.lower() in ["id a star", "ida*", "iterative deepening a*", "iterative deepening a star", "deepening a*", "deepening a star"]:
             previous, distance = self.__iterative_deepening_a_star(initial, goal)
