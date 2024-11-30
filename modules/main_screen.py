@@ -1,7 +1,12 @@
 import customtkinter as ctk
 import tkintermapview
 import map_with_shortest
+from map import Map
+from data_loader import get_map
+import utils
 
+xmu = Map()
+xmu = get_map()
 ctk.set_appearance_mode("dark")  # Modes: "dark", "light", or "system"
 ctk.set_default_color_theme("blue")  # Themes: "blue", "green", "dark-blue"
 
@@ -60,21 +65,21 @@ class Screen1(ctk.CTkFrame):
         question = ctk.CTkLabel(right_frame, text="> Where are you heading to?", font=("Lato", 30))
         question.pack(pady=(20, 5))
 
+        important_locations = xmu.get_important_loc()
+        important_label = [loc.get_name() for loc in important_locations]
         # Create a dropdown menu (CTkOptionMenu)
         self.choices = ctk.CTkOptionMenu(right_frame,
-                                    values=["A1", "A2", "A3", "A4", "A5", "B1", "B2", "D1", "D2", "D3", "D4", "D5",
-                                            "D6", "Guardhouse", "LY1", "LY2", "LY3", "LY4", "LY5",
-                                            "LY6", "LY7", "LY8", "LY9", "Music Island"], width=200,
+                                    values=important_label, width=200,
                                     font=('Times New Roman', 16), fg_color="black")
 
         # Set default value
-        self.choices.set("A1")
+        self.choices.set(important_label[0])
         self.choices.pack(pady=(15, 0))
         # Add a button
         def button_action():
-            selected_location = self.choices.get()  # Get selected location from dropdown
-            current_coords = parent.frame2.current_coordinates 
-            map_with_shortest.play(selected_location,current_coords)
+            to_location = self.choices.get()  # Get selected location from dropdown
+            from_location = list(parent.frame2.current_coordinates) 
+            map_with_shortest.play(from_location,to_location)
 
         button = ctk.CTkButton(right_frame, text="Select Location", command=button_action, width=20,
                                 fg_color="black",  # Button's primary color
@@ -84,10 +89,12 @@ class Screen1(ctk.CTkFrame):
         button.pack(pady=(15, 0))
 
 
+
+
 class Screen2(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
-        self.current_coordinates = [2.832855, 101.705715]  # Initial coordinates
+        self.current_coordinates = utils.get_curr_loc()  # Initial coordinates
 
         # Add the frame to the grid
         self.grid(row=0, column=0, sticky="nsew")  # Stretch to fill parent container
@@ -132,7 +139,7 @@ class Screen2(ctk.CTkFrame):
         self.map_widget.set_zoom(18)
 
         # Variable to hold the current location marker
-        self.current_marker = self.map_widget.set_marker(2.832855, 101.705715, "Current Location")
+        self.current_marker = self.map_widget.set_marker(self.current_coordinates[0],self.current_coordinates[1], "Current Location")
 
         # Function to change the current location
         def change_current(coords):
