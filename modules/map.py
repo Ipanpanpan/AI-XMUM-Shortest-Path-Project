@@ -23,7 +23,7 @@ class Map:
         loc2.add_neighbouring_path(loc1, distance)
 
     def get_all_search_algorithm(self) -> List[str]:
-        return ["a star", "greedy", "uniform", "dfs", "bfs", "bidirectional a star"]
+        return ["a star", "greedy", "uniform", "dfs", "bfs", "bidirectional a star", "iterative deepening a star"]
     
     def get_imp_loc_id_mapping(self) -> Dict[str, str]:
         loc_id = {}
@@ -334,7 +334,7 @@ class Map:
             previous, distance = self.__bfs(initial, goal)
         elif search_algorithm.lower() in ["bidirectional a star", "bidirectional a*", "bidirectional astar", "bidirectional"]:
             previous, distance = self.__bidirectional_a_star(initial, goal)
-        elif search_algorithm.lower() in ["id a star", "ida*", "iterative deepening a*", "iterative deeping a star", "deepening a*", "deepening a star"]:
+        elif search_algorithm.lower() in ["id a star", "ida*", "iterative deepening a*", "iterative deepening a star", "deepening a*", "deepening a star"]:
             previous, distance = self.__iterative_deepening_a_star(initial, goal)
         else:
             raise ValueError("Invalid search algorithm.")
