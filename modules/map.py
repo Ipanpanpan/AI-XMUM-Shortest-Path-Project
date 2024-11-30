@@ -300,6 +300,10 @@ class Map:
         threshold = self.__heuristic(initial, goal)
         path = [initial]
 
+        print(f"Initial: {initial}, Type: {type(initial)}, Hash: {hash(initial)}")
+        print(f"Goal: {goal}, Type: {type(goal)}, Hash: {hash(goal)}")
+
+
         while True:
             visited = {initial}
             result, solution_path = dfs(initial, 0, threshold, path, visited)
