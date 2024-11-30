@@ -188,6 +188,8 @@ def main():
     xmum : Map= get_map()
     # print([x.get_name() for x in xmum.get_important_loc()])
     # print(location_df)
-    print(location_df.loc_name[location_df.is_important == True])
+    print(sorted([loc.get_name() for loc in (xmum.get_important_loc())]))
+    print(len(xmum.get_all_loc()))
+    print(len(path_df))
 if __name__ == "__main__":
     main()
