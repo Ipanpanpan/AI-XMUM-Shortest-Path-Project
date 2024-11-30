@@ -2,8 +2,7 @@ from typing import Dict, List, Tuple, Optional, Union
 from location import Location, Path
 from geopy.distance import geodesic
 from queue import PriorityQueue
-from data_loader import find_nearest_location
-
+import numpy as np
 import copy
 
 
@@ -302,7 +301,20 @@ class Map:
     def from_curr_shortest_path(self, coor, to_loc):
         pass
 
-
+def find_nearest_location(coord, map, locs_coor = None):
+    if isinstance(locs_coor, type(np.array([]))):
+        locs_coor = np.array([[loc.get_latitude(), loc.get_longitude()] for loc in map.get_all_loc()])
+    # Convert the input coordinate to a numpy array
+    coord = np.array(coord)
+    
+    # Compute the Euclidean distance between coord and each location in locs_coor
+    distances = np.linalg.norm(locs_coor - coord, axis=1)  # axis=1 to compute row-wise norm (distance for each location)
+    
+    # Find the index of the closest location
+    index = np.argmin(distances)
+    
+    # Return the location corresponding to the minimum distance
+    return map.get_all_loc()[index]
 
 class PathNotFoundException(Exception):
     pass
