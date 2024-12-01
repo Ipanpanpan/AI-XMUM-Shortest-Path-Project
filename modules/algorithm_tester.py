@@ -39,7 +39,7 @@ def main():
     
 
     print(f"Finding shortest path from {start_location} to {end_location}...")
-    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "bidirectional")
+    path, distance = city_map.shortest_path(from_loc=start_location, to_loc=end_location, search_algorithm= "iterative deepening")
     # path, distance = [], 10
     if path:
         print("Shortest path coordinates:")
