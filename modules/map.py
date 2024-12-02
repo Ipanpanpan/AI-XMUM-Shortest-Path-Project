@@ -22,7 +22,7 @@ class Map:
         loc2.add_neighbouring_path(loc1, distance)
 
     def get_all_search_algorithm(self) -> List[str]:
-        return ["a star", "greedy", "uniform", "dfs", "bfs", "bidirectional heuristic", "iterative deepening a star"]
+        return ["a star", "greedy", "uniform", "dfs", "bfs", "bidirectional heuristic", "iterative deepening a star", "iterative deepening DFS"]
     
     def get_imp_loc_id_mapping(self) -> Dict[str, str]:
         loc_id = {}
@@ -377,9 +377,12 @@ class Map:
             previous, distance = self.__bidirectional_heuristic(initial, goal)
         elif search_algorithm.lower() in ["id a star", "ida*", "iterative deepening a*", "iterative deepening a star", "deepening a*", "deepening a star"]:
             previous, distance = self.__iterative_deepening_a_star(initial, goal)
+        elif search_algorithm.lower() in ["iterative deepening", "id", "deepening", "iterative deepening dfs"]:
+            previous, distance = self.__iterative_deepening_search(initial, goal)
         else:
             raise ValueError("Invalid search algorithm.")
         
+        print(previous, distance)
         if isinstance(previous, list):
             return previous, distance
 
