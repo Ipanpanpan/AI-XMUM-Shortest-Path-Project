@@ -268,46 +268,38 @@ class Map:
         else:
             return None
 
-    def __dfs_with_depth_limit(self, node: Location, goal: Location, depth_limit: int) -> Tuple[Dict[str, Optional[Location]], Dict[str, int]]:
-        reached = {node.get_id(): 0}
-        previous = {node.get_id(): None}
-        frontier = {node}
-
-        while frontier:
-            node = frontier.pop()
-
-            if node == goal:
-                return previous, reached
+    def __iterative_deepening_search(self, initial: Location, goal: Location) -> Tuple[List[List[int]], int]:
+        def dfs_with_depth_limit(node: Location, depth: int, visited: set) -> Tuple[Optional[List[Location]], Optional[int]]:
             
-            if reached[node.get_id()] < depth_limit:
-                for path in node.get_neighbouring_path():
-                    child = path.get_end_loc()
-                    path_cost_to_child = path.get_distance() + reached[node.get_id()]
-                    if child.get_id() not in reached or path_cost_to_child < reached[child.get_id()]:
-                        reached[child.get_id()] = path_cost_to_child
-                        frontier.append(child)
-                        previous[child.get_id()] = node
+            if depth == 0:
+                return ([node] if node == goal else None), 0
+            
+            if node in visited:
+                return None, None
+            
+            visited.add(node)
 
-        return None, None
-    
-
-
-    def __iterative_deepening_search(self, initial: Location, goal: Location) -> List[List[int]]:
-        depth_limit = 0
-        while True:
-            previous, reached = self.__dfs_with_depth_limit(initial, goal, depth_limit)
-
-            if previous is not None:
-                path = []
-                n = goal
-
-                while n is not None:
-                    path.insert(0, n.get_coordinate())
-                    n = previous[n.get_id()]
-                return path, reached[goal.get_id()]
-
-            depth_limit += 1      
+            for path in node.get_neighbouring_path():
+                child = path.get_end_loc()
+                path_cost = path.get_distance()
+                result, cost = dfs_with_depth_limit(child, depth - 1, visited)
+                if result:
+                        return ([node] + result, path_cost + cost)
+                
+            visited.remove(node)
+            return None, None
         
+        depth = 0
+        while True:
+            visited = set()
+            result, total_cost = dfs_with_depth_limit(initial, depth, visited)
+            if result:
+                path_coordinates = [[loc.get_latitude(), loc.get_longitude()] for loc in result]
+                return path_coordinates, total_cost
+            depth += 1
+            if depth > len(self.__nodes):
+                raise PathNotFoundException("No path found from initial to goal.")
+            
     def __iterative_deepening_a_star (self, initial : Location, goal : Location) -> Tuple[List[List[int]], int]:
         def dfs(current: Location, g: float, threshold: float, path: List[Location], visited: set) -> Tuple[Optional[float], Optional[List[Location]]]:
             f = g + self.__heuristic(current, goal)
