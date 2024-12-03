@@ -1,6 +1,7 @@
 from typing import List, Tuple
 
 class Location:
+    """this class represents a location in the map or a node in the graph"""
     def __init__(self, name : str, latitude : float, longitude : float, id : str, is_important : bool):
         self.__name = name
         self.__latitude = latitude
@@ -63,6 +64,8 @@ class Location:
 
 
 class Path:
+    """this class represents a path between two locations in the map or an edge in the graph"""
+
     def __init__(self, start_node : Location, end_node : Location, weight : int):
         self.__start_node = start_node
         self.__end_node = end_node
