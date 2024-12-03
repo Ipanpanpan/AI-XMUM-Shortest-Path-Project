@@ -3,7 +3,7 @@ from typing import List, Tuple
 from location import Location
 
 def get_curr_loc() -> Tuple[float, float]:
-
+    """this function fetches the current geolocation of the user based on their public IP address."""
     # Send a GET request to ipinfo.io to get geolocation data based on the public IP
     try:
         response = requests.get('http://ipinfo.io/json')
