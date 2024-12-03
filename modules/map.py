@@ -268,38 +268,52 @@ class Map:
         else:
             return None
 
+    """
+    this function defines Iterative Deepening Depth-First Search to find the shortest path between two locations
+    by recursively exploring paths up to a depth limit and increasing it iteratively
+    """
     def __iterative_deepening_search(self, initial: Location, goal: Location) -> Tuple[List[List[int]], int]:
         def dfs_with_depth_limit(node: Location, depth: int, visited: set) -> Tuple[Optional[List[Location]], Optional[int]]:
             
+            if node == goal:
+                return [node], 0
             if depth == 0:
-                return ([node] if node == goal else None), 0
-            
+                return None, None
             if node in visited:
                 return None, None
             
             visited.add(node)
 
+            # Explore all neighboring paths from current node
             for path in node.get_neighbouring_path():
                 child = path.get_end_loc()
                 path_cost = path.get_distance()
+                # Recursively perform DFS on the child node with reduced depth
                 result, cost = dfs_with_depth_limit(child, depth - 1, visited)
+                
+                # Append node if valid path is found
                 if result:
                         return ([node] + result, path_cost + cost)
                 
             visited.remove(node)
             return None, None
         
+        depth_limit = len(self.__nodes)
         depth = 0
-        while True:
+
+        while depth <= depth_limit:
             visited = set()
             result, total_cost = dfs_with_depth_limit(initial, depth, visited)
+            
             if result:
                 path_coordinates = [[loc.get_latitude(), loc.get_longitude()] for loc in result]
                 return path_coordinates, total_cost
-            depth += 1
-            if depth > len(self.__nodes):
-                raise PathNotFoundException("No path found from initial to goal.")
-            
+            depth += 1 # Increment the depth limit for the next iteration
+
+        raise PathNotFoundException("No path found from initial to goal.")
+
+
+
     def __iterative_deepening_a_star (self, initial : Location, goal : Location) -> Tuple[List[List[int]], int]:
         def dfs(current: Location, g: float, threshold: float, path: List[Location], visited: set) -> Tuple[Optional[float], Optional[List[Location]]]:
             f = g + self.__heuristic(current, goal)
