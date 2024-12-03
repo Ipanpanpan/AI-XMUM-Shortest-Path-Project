@@ -1,7 +1,12 @@
 import customtkinter as ctk
 import tkintermapview
 import map_with_shortest
+from map import Map
+from data_loader import get_map
+import utils
 
+xmu = Map()
+xmu = get_map()
 ctk.set_appearance_mode("dark")  # Modes: "dark", "light", or "system"
 ctk.set_default_color_theme("blue")  # Themes: "blue", "green", "dark-blue"
 
@@ -34,47 +39,86 @@ class Screen1(ctk.CTkFrame):
         self.grid(row=0, column=0, sticky="nsew")  # Stretch to fill parent container
 
         # Left frame
-        left_frame = ctk.CTkFrame(self, width=350)  # Half of the screen width
+        left_frame = ctk.CTkFrame(self, width=600) 
         left_frame.pack(side="left", fill="both", expand=True)
 
         # UI elements for Screen 1
-        label = ctk.CTkLabel(left_frame, text="Welcome to \nXMUM Shortest Path!", font=("Comic Sans", 45))
-        label.pack(pady=(200, 5))
+        label = ctk.CTkLabel(left_frame, text="Welcome to \nXMUM Shortest Path!", font=("Comic Sans", 35))
+        label.pack(pady=(200, 5),padx=50)
 
         # To verify current location
         verify = ctk.CTkButton(left_frame, text="Click to verify your current location", width=250,
                                 command=lambda: parent.show_frame(parent.frame2))
         verify.pack(pady=15)
 
+        # To select location
+        desc = ctk.CTkLabel(left_frame,
+                            text="Why take the LONG way when you can take the RIGHT way? \n Let us guide you, shortcut style!;)",
+                            font=("Comic Sans", 15))
+        desc.pack(pady=(15, 5))
+
         # Right frame
-        right_frame = ctk.CTkFrame(self, width=550)
+        right_frame = ctk.CTkFrame(self, width=350)
         right_frame.pack(side="right", fill="both", expand=True)
 
-        # To select location
-        desc = ctk.CTkLabel(right_frame,
-                            text="Why take the long way when you can take the right way? \n Let us guide you, shortcut style!",
-                            font=("Lato", 20))
-        desc.pack(pady=(200, 5))
 
         # To select location
         question = ctk.CTkLabel(right_frame, text="> Where are you heading to?", font=("Lato", 30))
-        question.pack(pady=(20, 5))
+        question.pack(pady=(200, 5))
 
+        important_locations = xmu.get_important_loc()
+        important_label = sorted([loc.get_name() for loc in important_locations])
         # Create a dropdown menu (CTkOptionMenu)
         self.choices = ctk.CTkOptionMenu(right_frame,
-                                    values=["A1", "A2", "A3", "A4", "A5", "B1", "B2", "D1", "D2", "D3", "D4", "D5",
-                                            "D6", "Guardhouse", "LY1", "LY2", "LY3", "LY4", "LY5",
-                                            "LY6", "LY7", "LY8", "LY9", "Music Island"], width=200,
+                                    values=important_label, width=200,
                                     font=('Times New Roman', 16), fg_color="black")
 
         # Set default value
-        self.choices.set("A1")
+        self.choices.set(important_label[0])
         self.choices.pack(pady=(15, 0))
+        
+        # Set dev tools
+        new_frame = ctk.CTkFrame(right_frame,fg_color="black",width=20)
+        new_frame.pack(pady=18,padx=163, fill="x")
+
+        text = ctk.CTkLabel(new_frame,  text="Custom Search", font=("Lato",12))
+        text.pack(side="left", padx=(5,0))
+
+        # Choosing search algorithms
+        algo_choices = xmu.get_all_search_algorithm()
+        def choose_algo():
+            self.chosen_algo = ctk.CTkOptionMenu(right_frame,
+                                    values=algo_choices, width=30,
+                                    font=('Lato', 16), fg_color="black")
+            # Default
+            self.chosen_algo.set(algo_choices[0])     
+            self.chosen_algo.pack(pady= 15)
+    
+            
+
+        # Checkbox for the item
+        def on_check():
+            if checkbox.get() == 1:  # If the checkbox is selected
+                choose_algo()
+            else:
+                self.chosen_algo.pack_forget()
+
+        checkbox = ctk.CTkCheckBox(new_frame, text="", command=on_check,width=100,hover=True)
+        checkbox.pack(side="right",padx=12)
+
+        def get_chosen_algo():
+            if hasattr(self, 'chosen_algo') and self.chosen_algo:  # Check if it exists
+                return self.chosen_algo.get()
+            else:
+                return 'a star'  # Or some default value if no selection is available
+
+
         # Add a button
         def button_action():
-            selected_location = self.choices.get()  # Get selected location from dropdown
-            current_coords = parent.frame2.current_coordinates 
-            map_with_shortest.play(selected_location,current_coords)
+            to_location = self.choices.get()  # Get selected location from dropdown
+            from_location = list(parent.frame2.current_coordinates)
+            chosen_algorithm = get_chosen_algo()
+            map_with_shortest.play(from_location,to_location,chosen_algorithm)
 
         button = ctk.CTkButton(right_frame, text="Select Location", command=button_action, width=20,
                                 fg_color="black",  # Button's primary color
@@ -84,10 +128,11 @@ class Screen1(ctk.CTkFrame):
         button.pack(pady=(15, 0))
 
 
+
 class Screen2(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
-        self.current_coordinates = [2.832855, 101.705715]  # Initial coordinates
+        self.current_coordinates = utils.get_curr_loc()  # Initial coordinates
 
         # Add the frame to the grid
         self.grid(row=0, column=0, sticky="nsew")  # Stretch to fill parent container
@@ -132,7 +177,7 @@ class Screen2(ctk.CTkFrame):
         self.map_widget.set_zoom(18)
 
         # Variable to hold the current location marker
-        self.current_marker = self.map_widget.set_marker(2.832855, 101.705715, "Current Location")
+        self.current_marker = self.map_widget.set_marker(self.current_coordinates[0],self.current_coordinates[1], "Current Location")
 
         # Function to change the current location
         def change_current(coords):
@@ -153,7 +198,6 @@ class Screen2(ctk.CTkFrame):
 
         # Add right-click menu to the map
         self.map_widget.add_right_click_menu_command(label="Confirm Location", command=change_current, pass_coords=True)
-
 
 
 if __name__ == "__main__":

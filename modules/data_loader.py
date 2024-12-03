@@ -4,6 +4,7 @@ import numpy as np
 from map import Map
 from location import Location
 from geopy.distance import geodesic
+
 from map import find_nearest_location
 
 def parse_path(file_path: str) -> pd.DataFrame:
@@ -96,7 +97,9 @@ def parse_location(file_path: str) -> pd.DataFrame:
             #Check the <styleUrl> tag to determine if the location is important
             style_url = placemark.find('kml:styleUrl', namespaces=namespace)
             style_url_text = style_url.text if style_url is not None else ''
+
             is_important = style_url_text != '#__managed_style_0D431BAC7434B0BBDE51'  #Important if not matching the "not important" style
+
 
             locations.append({
                 'id': loc_id,
@@ -163,6 +166,7 @@ def validate_kml(file_path: str, location_df: pd.DataFrame, path_df: pd.DataFram
     assert len(kml_segments) == len(path_df), f"Mismatch in number of segments: KML={len(kml_segments)}, DataFrame={len(path_df)}"
     print("Path validation passed!")
 
+
 def get_map() -> Map:
     """
     Generates a map by parsing location and path data from a KML file and adding locations and paths to the map.
@@ -217,6 +221,7 @@ def main():
     #print("Path DataFrame: ")
     #print(path_df.head())
     validate_kml(file_path, location_df, path_df)
+    
     xmum : Map = get_map()
     #print([x.get_name() for x in xmum.get_important_loc()])
     #print(location_df)
